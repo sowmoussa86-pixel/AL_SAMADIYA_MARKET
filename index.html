@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AL SAMADIYA MARKET — Votre marché, livré chez vous</title>
+  <meta name="description" content="AL SAMADIYA MARKET — plateforme intelligente de vente, achat et livraison à domicile au Sénégal.">
+  <style>
+    :root{
+      --green:#075b3a;
+      --green2:#0b7a4d;
+      --orange:#f28c00;
+      --cream:#fffaf0;
+      --text:#173128;
+      --muted:#66756e;
+      --white:#fff;
+      --shadow:0 18px 45px rgba(7,91,58,.12);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;font-family:Inter,Arial,sans-serif;color:var(--text);
+      background:#fff;line-height:1.5
+    }
+    a{text-decoration:none;color:inherit}
+    .container{width:min(1180px,92%);margin:auto}
+    header{
+      position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);
+      backdrop-filter:blur(12px);border-bottom:1px solid #e9eee9
+    }
+    .nav{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--green)}
+    .brand img{width:52px;height:52px;object-fit:contain;border-radius:12px}
+    .brand span{font-size:19px;letter-spacing:.5px}
+    nav{display:flex;gap:26px;align-items:center}
+    nav a{font-weight:700;color:#355147}
+    nav a:hover{color:var(--orange)}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:9px;
+      padding:13px 20px;border-radius:12px;font-weight:800;border:0;cursor:pointer
+    }
+    .btn-green{background:var(--green);color:white}
+    .btn-orange{background:var(--orange);color:white}
+    .btn-light{background:white;color:var(--green);border:1px solid #dce8e1}
+    .hero{
+      background:linear-gradient(135deg,#f1faf5 0%,#fffaf0 55%,#fff 100%);
+      padding:65px 0 70px;overflow:hidden
+    }
+    .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:45px}
+    .badge{
+      display:inline-flex;padding:8px 13px;border-radius:999px;
+      background:#e2f4ea;color:var(--green);font-weight:800;font-size:13px
+    }
+    h1{font-size:clamp(42px,6vw,72px);line-height:.98;margin:18px 0;color:var(--green)}
+    h1 em{font-style:normal;color:var(--orange)}
+    .hero p{font-size:19px;color:var(--muted);max-width:650px}
+    .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}
+    .phone{margin-top:18px;font-weight:800;color:var(--green)}
+    .hero-card{
+      background:white;border-radius:28px;padding:22px;box-shadow:var(--shadow);
+      border:1px solid #edf2ee
+    }
+    .hero-card img{width:100%;display:block;border-radius:18px}
+    .section{padding:70px 0}
+    .section.alt{background:var(--cream)}
+    .section-head{text-align:center;max-width:760px;margin:0 auto 38px}
+    .section-head h2{font-size:38px;color:var(--green);margin:0 0 10px}
+    .section-head p{color:var(--muted)}
+    .categories{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+    .cat{
+      background:white;border:1px solid #e8eee9;border-radius:18px;padding:22px 12px;
+      text-align:center;font-weight:800;box-shadow:0 7px 25px rgba(0,0,0,.04)
+    }
+    .cat .icon{font-size:32px;margin-bottom:8px}
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .feature{padding:28px;background:white;border-radius:22px;box-shadow:0 8px 30px rgba(7,91,58,.07)}
+    .feature .icon{font-size:35px}.feature h3{color:var(--green)}
+    .how{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .step{position:relative;background:#fff;padding:24px;border-radius:20px;border:1px solid #e9eee9}
+    .num{
+      width:38px;height:38px;border-radius:50%;background:var(--orange);color:white;
+      display:flex;align-items:center;justify-content:center;font-weight:900;margin-bottom:14px
+    }
+    .cta{
+      background:linear-gradient(120deg,var(--green),#0c8a58);color:white;
+      border-radius:30px;padding:45px;text-align:center
+    }
+    .cta h2{font-size:38px;margin:0 0 10px}.cta p{opacity:.9}
+    footer{background:#063d29;color:white;padding:38px 0 25px}
+    .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:35px}
+    footer h3{margin-top:0}.footer-link{display:block;margin:8px 0;color:#d8eee3}
+    .copy{border-top:1px solid rgba(255,255,255,.15);margin-top:25px;padding-top:18px;color:#b9d4c7}
+    .mobile-menu{display:none}
+    @media(max-width:900px){
+      nav{display:none}.mobile-menu{display:inline-flex}
+      .hero-grid{grid-template-columns:1fr}.categories{grid-template-columns:repeat(3,1fr)}
+      .features{grid-template-columns:1fr}.how{grid-template-columns:1fr 1fr}
+      .footer-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:560px){
+      .nav{height:68px}.brand img{width:45px;height:45px}
+      .brand span{font-size:15px}.hero{padding:42px 0}
+      h1{font-size:46px}.categories{grid-template-columns:repeat(2,1fr)}
+      .how{grid-template-columns:1fr}.cta{padding:30px 20px}.cta h2{font-size:30px}
+      .footer-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a class="brand" href="#accueil">
+      <img src="logo.png" alt="Logo AL SAMADIYA MARKET">
+      <span>AL SAMADIYA MARKET</span>
+    </a>
+    <nav>
+      <a href="#accueil">Accueil</a>
+      <a href="#categories">Catégories</a>
+      <a href="#fonctionnement">Comment ça marche</a>
+      <a href="#vendeurs">Vendeurs</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="btn btn-green mobile-menu" href="#contact">Commander</a>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="accueil">
+  <div class="container hero-grid">
+    <div>
+      <span class="badge">🇸🇳 Marketplace sénégalaise • Livraison à domicile</span>
+      <h1>Votre marché,<br><em>livré chez vous.</em></h1>
+      <p>
+        Découvrez, comparez et commandez vos produits auprès de commerçants,
+        producteurs et boutiques partenaires. AL SAMADIYA MARKET rapproche
+        le marché de votre maison.
+      </p>
+      <div class="actions">
+        <a class="btn btn-orange" href="#categories">🛒 Découvrir le marché</a>
+        <a class="btn btn-green" href="tel:+221779306910">📞 77 930 69 10</a>
+        <a class="btn btn-light" href="https://wa.me/221779306910" target="_blank" rel="noopener">💬 WhatsApp</a>
+      </div>
+      <div class="phone">📲 Commandes et informations : 77 930 69 10</div>
+    </div>
+    <div class="hero-card">
+      <img src="logo.png" alt="AL SAMADIYA MARKET">
+    </div>
+  </div>
+</section>
+
+<section class="section" id="categories">
+  <div class="container">
+    <div class="section-head">
+      <h2>Tout votre marché au même endroit</h2>
+      <p>Une plateforme pensée pour les besoins quotidiens des familles, professionnels et commerçants.</p>
+    </div>
+    <div class="categories">
+      <div class="cat"><div class="icon">🐟</div>Poisson</div>
+      <div class="cat"><div class="icon">🥩</div>Viande</div>
+      <div class="cat"><div class="icon">🥬</div>Fruits & légumes</div>
+      <div class="cat"><div class="icon">🛒</div>Alimentation</div>
+      <div class="cat"><div class="icon">👕</div>Mode</div>
+      <div class="cat"><div class="icon">🏠</div>Maison</div>
+    </div>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="container">
+    <div class="section-head">
+      <h2>Une plateforme intelligente</h2>
+      <p>AL SAMADIYA MARKET connecte clients, vendeurs et livreurs dans un seul écosystème.</p>
+    </div>
+    <div class="features">
+      <div class="feature"><div class="icon">🔎</div><h3>Recherche intelligente</h3><p>Trouvez rapidement un produit, une boutique ou un vendeur selon votre besoin et votre zone.</p></div>
+      <div class="feature"><div class="icon">🚚</div><h3>Livraison à domicile</h3><p>Recevez vos achats à l'adresse indiquée et suivez l'état de votre commande.</p></div>
+      <div class="feature"><div class="icon">📍</div><h3>Proximité</h3><p>Découvrez les commerçants et produits disponibles près de chez vous.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="fonctionnement">
+  <div class="container">
+    <div class="section-head">
+      <h2>Comment ça marche ?</h2>
+      <p>Commander devient simple en quatre étapes.</p>
+    </div>
+    <div class="how">
+      <div class="step"><div class="num">1</div><h3>Choisissez</h3><p>Parcourez les produits et boutiques.</p></div>
+      <div class="step"><div class="num">2</div><h3>Commandez</h3><p>Ajoutez vos articles au panier.</p></div>
+      <div class="step"><div class="num">3</div><h3>Faites-vous livrer</h3><p>Indiquez votre adresse et votre créneau.</p></div>
+      <div class="step"><div class="num">4</div><h3>Recevez</h3><p>Suivez la livraison jusqu'à votre domicile.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="vendeurs">
+  <div class="container">
+    <div class="cta">
+      <h2>Vous êtes commerçant ?</h2>
+      <p>Rejoignez AL SAMADIYA MARKET, présentez vos produits en ligne et développez vos ventes avec notre réseau de livraison.</p>
+      <div class="actions" style="justify-content:center">
+        <a class="btn btn-orange" href="https://wa.me/221779306910" target="_blank" rel="noopener">💬 Devenir vendeur</a>
+        <a class="btn btn-light" href="tel:+221779306910">📞 Nous contacter</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer id="contact">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h3>AL SAMADIYA MARKET</h3>
+        <p>Votre marché, livré chez vous.</p>
+        <p>Marketplace de vente, achat et livraison à domicile au Sénégal.</p>
+      </div>
+      <div>
+        <h3>Navigation</h3>
+        <a class="footer-link" href="#accueil">Accueil</a>
+        <a class="footer-link" href="#categories">Catégories</a>
+        <a class="footer-link" href="#fonctionnement">Fonctionnement</a>
+      </div>
+      <div>
+        <h3>Contact</h3>
+        <a class="footer-link" href="tel:+221779306910">📞 77 930 69 10</a>
+        <a class="footer-link" href="https://wa.me/221779306910" target="_blank" rel="noopener">💬 WhatsApp : 77 906 910</a>
+      </div>
+    </div>
+    <div class="copy">© 2026 AL SAMADIYA MARKET — Tous droits réservés.</div>
+  </div>
+</footer>
+</body>
+</html>
