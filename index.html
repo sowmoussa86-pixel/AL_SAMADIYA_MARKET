@@ -1,235 +1,237 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AL SAMADIYA MARKET — Votre marché, livré chez vous</title>
-  <meta name="description" content="AL SAMADIYA MARKET — plateforme intelligente de vente, achat et livraison à domicile au Sénégal.">
-  <style>
-    :root{
-      --green:#075b3a;
-      --green2:#0b7a4d;
-      --orange:#f28c00;
-      --cream:#fffaf0;
-      --text:#173128;
-      --muted:#66756e;
-      --white:#fff;
-      --shadow:0 18px 45px rgba(7,91,58,.12);
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;font-family:Inter,Arial,sans-serif;color:var(--text);
-      background:#fff;line-height:1.5
-    }
-    a{text-decoration:none;color:inherit}
-    .container{width:min(1180px,92%);margin:auto}
-    header{
-      position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);
-      backdrop-filter:blur(12px);border-bottom:1px solid #e9eee9
-    }
-    .nav{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--green)}
-    .brand img{width:52px;height:52px;object-fit:contain;border-radius:12px}
-    .brand span{font-size:19px;letter-spacing:.5px}
-    nav{display:flex;gap:26px;align-items:center}
-    nav a{font-weight:700;color:#355147}
-    nav a:hover{color:var(--orange)}
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:9px;
-      padding:13px 20px;border-radius:12px;font-weight:800;border:0;cursor:pointer
-    }
-    .btn-green{background:var(--green);color:white}
-    .btn-orange{background:var(--orange);color:white}
-    .btn-light{background:white;color:var(--green);border:1px solid #dce8e1}
-    .hero{
-      background:linear-gradient(135deg,#f1faf5 0%,#fffaf0 55%,#fff 100%);
-      padding:65px 0 70px;overflow:hidden
-    }
-    .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:45px}
-    .badge{
-      display:inline-flex;padding:8px 13px;border-radius:999px;
-      background:#e2f4ea;color:var(--green);font-weight:800;font-size:13px
-    }
-    h1{font-size:clamp(42px,6vw,72px);line-height:.98;margin:18px 0;color:var(--green)}
-    h1 em{font-style:normal;color:var(--orange)}
-    .hero p{font-size:19px;color:var(--muted);max-width:650px}
-    .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}
-    .phone{margin-top:18px;font-weight:800;color:var(--green)}
-    .hero-card{
-      background:white;border-radius:28px;padding:22px;box-shadow:var(--shadow);
-      border:1px solid #edf2ee
-    }
-    .hero-card img{width:100%;display:block;border-radius:18px}
-    .section{padding:70px 0}
-    .section.alt{background:var(--cream)}
-    .section-head{text-align:center;max-width:760px;margin:0 auto 38px}
-    .section-head h2{font-size:38px;color:var(--green);margin:0 0 10px}
-    .section-head p{color:var(--muted)}
-    .categories{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
-    .cat{
-      background:white;border:1px solid #e8eee9;border-radius:18px;padding:22px 12px;
-      text-align:center;font-weight:800;box-shadow:0 7px 25px rgba(0,0,0,.04)
-    }
-    .cat .icon{font-size:32px;margin-bottom:8px}
-    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-    .feature{padding:28px;background:white;border-radius:22px;box-shadow:0 8px 30px rgba(7,91,58,.07)}
-    .feature .icon{font-size:35px}.feature h3{color:var(--green)}
-    .how{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-    .step{position:relative;background:#fff;padding:24px;border-radius:20px;border:1px solid #e9eee9}
-    .num{
-      width:38px;height:38px;border-radius:50%;background:var(--orange);color:white;
-      display:flex;align-items:center;justify-content:center;font-weight:900;margin-bottom:14px
-    }
-    .cta{
-      background:linear-gradient(120deg,var(--green),#0c8a58);color:white;
-      border-radius:30px;padding:45px;text-align:center
-    }
-    .cta h2{font-size:38px;margin:0 0 10px}.cta p{opacity:.9}
-    footer{background:#063d29;color:white;padding:38px 0 25px}
-    .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:35px}
-    footer h3{margin-top:0}.footer-link{display:block;margin:8px 0;color:#d8eee3}
-    .copy{border-top:1px solid rgba(255,255,255,.15);margin-top:25px;padding-top:18px;color:#b9d4c7}
-    .mobile-menu{display:none}
-    @media(max-width:900px){
-      nav{display:none}.mobile-menu{display:inline-flex}
-      .hero-grid{grid-template-columns:1fr}.categories{grid-template-columns:repeat(3,1fr)}
-      .features{grid-template-columns:1fr}.how{grid-template-columns:1fr 1fr}
-      .footer-grid{grid-template-columns:1fr 1fr}
-    }
-    @media(max-width:560px){
-      .nav{height:68px}.brand img{width:45px;height:45px}
-      .brand span{font-size:15px}.hero{padding:42px 0}
-      h1{font-size:46px}.categories{grid-template-columns:repeat(2,1fr)}
-      .how{grid-template-columns:1fr}.cta{padding:30px 20px}.cta h2{font-size:30px}
-      .footer-grid{grid-template-columns:1fr}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AL SAMADIYA MARKET</title>
+<meta name="description" content="Marketplace sénégalaise : agriculture, alimentation, boissons naturelles, parapharmacie, compléments alimentaires, mode et maison.">
+<style>
+:root{--g:#075b3a;--g2:#0b7a4d;--o:#f28c00;--cream:#fffaf0;--bg:#f6faf7;--text:#173128;--muted:#68776f;--line:#dfe9e3;--danger:#b42318}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:#fff;line-height:1.5}
+a{text-decoration:none;color:inherit}button,input,select,textarea{font:inherit}button{cursor:pointer}
+.wrap{width:min(1180px,92%);margin:auto}.btn{border:0;border-radius:10px;padding:11px 16px;font-weight:800}.g{background:var(--g);color:#fff}.o{background:var(--o);color:#fff}.light{background:#fff;border:1px solid var(--line);color:var(--g)}
+header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav{min-height:70px;display:flex;align-items:center;gap:14px}.brand{display:flex;align-items:center;gap:9px;color:var(--g);font-weight:900}.brand img{width:50px;height:50px;object-fit:contain}.links{margin-left:auto;display:flex;gap:18px}.links a{font-weight:700}
+.cart{white-space:nowrap}.badge{background:var(--o);color:#fff;border-radius:20px;padding:2px 7px;font-size:12px}
+.hero{background:linear-gradient(135deg,#eef9f3,#fff9ed);padding:55px 0}.heroGrid{display:grid;grid-template-columns:1.1fr .9fr;gap:38px;align-items:center}.hero h1{font-size:clamp(42px,6vw,70px);line-height:1;color:var(--g);margin:16px 0}.hero h1 span{color:var(--o)}.hero p{font-size:18px;color:var(--muted)}.heroCard{background:#fff;padding:18px;border-radius:24px;box-shadow:0 10px 30px #0001}.heroCard img{width:100%;border-radius:16px}
+.section{padding:58px 0}.alt{background:var(--cream)}.head{text-align:center;max-width:800px;margin:0 auto 28px}.head h2{font-size:34px;color:var(--g);margin:0 0 8px}.head p{color:var(--muted)}
+.search{display:flex;gap:8px;max-width:760px;margin:0 auto 22px}.search input{flex:1;padding:13px;border:1px solid var(--line);border-radius:10px;outline:none}
+.categories{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.cat{background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px 7px;font-weight:800}.cat.active{border-color:var(--g);box-shadow:0 4px 15px #075b3a14}
+.products{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.product{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 6px 20px #0000000a}.pic{height:145px;background:linear-gradient(135deg,#eff9f3,#fff9ed);display:flex;align-items:center;justify-content:center;font-size:58px}.pic img{width:100%;height:100%;object-fit:cover}.pbody{padding:14px}.pcat{font-size:12px;color:var(--muted)}.price{font-size:19px;color:var(--g);font-weight:900}.date{font-size:11px;color:var(--muted);margin:4px 0 10px}.add{width:100%;border:0;border-radius:9px;background:var(--g);color:#fff;padding:10px;font-weight:800}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{background:#fff;padding:22px;border-radius:18px;box-shadow:0 7px 25px #075b3a12}.card h3{color:var(--g)}
+.form{max-width:800px;margin:auto;background:#fff;border-radius:18px;padding:22px;box-shadow:0 7px 25px #0000000b}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin:11px 0}.field label{display:block;font-weight:800;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;padding:10px;border:1px solid #ccd8d1;border-radius:8px}.field textarea{min-height:80px}.notice{background:#f1f7f3;border-left:4px solid var(--g);padding:12px;border-radius:8px;margin:12px 0}.small{font-size:12px;color:var(--muted)}
+.pending{border:1px solid var(--line);border-radius:13px;padding:15px;margin:12px 0;background:#fff}.pending img{width:100px;height:75px;object-fit:cover;border-radius:8px;float:left;margin-right:12px}.pending:after{content:"";display:block;clear:both}.status{display:inline-block;padding:4px 8px;border-radius:20px;background:#fff1d6;color:#8a5700;font-size:12px;font-weight:800}.published{background:#e1f5e9;color:#08633f}.adminRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}.adminRow input{width:100%;padding:10px;border:1px solid #ccd8d1;border-radius:8px}.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+footer{background:#063d29;color:#fff;padding:30px}.footerGrid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:25px}.footerLink{display:block;margin:7px 0;color:#d8eee3}
+.overlay{position:fixed;inset:0;background:#0008;z-index:200;display:none}.overlay.show{display:block}.drawer{position:absolute;right:0;top:0;width:min(470px,96%);height:100%;background:#fff;padding:18px;overflow:auto}.item{padding:12px 0;border-bottom:1px solid var(--line)}.qty{display:flex;align-items:center;gap:8px;margin-top:7px}.qty button{width:30px;height:30px;border:1px solid #ccd8d1;background:#fff;border-radius:7px}.total{display:flex;justify-content:space-between;font-size:20px;font-weight:900;padding:15px 0}
+.modal{position:fixed;inset:0;background:#0008;z-index:300;display:none;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.modalBox{width:min(720px,96%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;padding:22px}.close{float:right;border:0;background:#eee;border-radius:8px;padding:7px}.choice{display:grid;grid-template-columns:1fr 1fr;gap:8px}.choice label{border:1px solid var(--line);padding:10px;border-radius:9px}.summary{background:#f3f7f4;border-radius:10px;padding:12px;margin:12px 0}
+@media(max-width:900px){.links{display:none}.heroGrid{grid-template-columns:1fr}.categories{grid-template-columns:repeat(3,1fr)}.products{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr}.footerGrid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.categories{grid-template-columns:repeat(2,1fr)}.products{grid-template-columns:1fr}.grid2,.adminRow,.choice{grid-template-columns:1fr}.search{flex-direction:column}.footerGrid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
+
 <header>
-  <div class="container nav">
-    <a class="brand" href="#accueil">
-      <img src="logo.png" alt="Logo AL SAMADIYA MARKET">
-      <span>AL SAMADIYA MARKET</span>
-    </a>
-    <nav>
-      <a href="#accueil">Accueil</a>
-      <a href="#categories">Catégories</a>
-      <a href="#fonctionnement">Comment ça marche</a>
-      <a href="#vendeurs">Vendeurs</a>
-      <a href="#contact">Contact</a>
-    </nav>
-    <a class="btn btn-green mobile-menu" href="#contact">Commander</a>
-  </div>
+<div class="wrap nav">
+<a class="brand" href="#accueil"><img src="logo.png" alt="Logo AL SAMADIYA MARKET"><span>AL SAMADIYA MARKET</span></a>
+<nav class="links"><a href="#accueil">Accueil</a><a href="#produits">Produits</a><a href="#annonce">Publier</a><a href="#admin">Administration</a><a href="#contact">Contact</a></nav>
+<button class="btn g cart" onclick="openCart()"> Panier <span id="cartCount" class="badge">0</span></button>
+</div>
 </header>
 
-<main>
 <section class="hero" id="accueil">
-  <div class="container hero-grid">
-    <div>
-      <span class="badge">🇸🇳 Marketplace sénégalaise • Livraison à domicile</span>
-      <h1>Votre marché,<br><em>livré chez vous.</em></h1>
-      <p>
-        Découvrez, comparez et commandez vos produits auprès de commerçants,
-        producteurs et boutiques partenaires. AL SAMADIYA MARKET rapproche
-        le marché de votre maison.
-      </p>
-      <div class="actions">
-        <a class="btn btn-orange" href="#categories">🛒 Découvrir le marché</a>
-        <a class="btn btn-green" href="tel:+221779306910">📞 77 930 69 10</a>
-        <a class="btn btn-light" href="https://wa.me/221779306910" target="_blank" rel="noopener">💬 WhatsApp</a>
-      </div>
-      <div class="phone">📲 Commandes et informations : 77 930 69 10</div>
-    </div>
-    <div class="hero-card">
-      <img src="logo.png" alt="AL SAMADIYA MARKET">
-    </div>
-  </div>
+<div class="wrap heroGrid"><div>
+<strong> Marketplace sénégalaise • Prix actualisés</strong>
+<h1>Votre marché,<br><span>livré chez vous.</span></h1>
+<p>Producteurs, commerçants et propriétaires publient leurs produits. AL SAMADIYA vérifie les annonces, fixe le prix de vente et publie les offres validées.</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn o" href="#produits"> Acheter</a><a class="btn g" href="#annonce"> Publier un produit</a></div>
+</div><div class="heroCard"><img src="logo.png" alt="AL SAMADIYA MARKET"></div></div>
 </section>
 
-<section class="section" id="categories">
-  <div class="container">
-    <div class="section-head">
-      <h2>Tout votre marché au même endroit</h2>
-      <p>Une plateforme pensée pour les besoins quotidiens des familles, professionnels et commerçants.</p>
-    </div>
-    <div class="categories">
-      <div class="cat"><div class="icon">🐟</div>Poisson</div>
-      <div class="cat"><div class="icon">🥩</div>Viande</div>
-      <div class="cat"><div class="icon">🥬</div>Fruits & légumes</div>
-      <div class="cat"><div class="icon">🛒</div>Alimentation</div>
-      <div class="cat"><div class="icon">👕</div>Mode</div>
-      <div class="cat"><div class="icon">🏠</div>Maison</div>
-    </div>
-  </div>
+<section class="section" id="produits">
+<div class="wrap">
+<div class="head"><h2>Produits disponibles</h2><p>Les prix affichés sont ceux validés par AL SAMADIYA. La date de mise à jour est affichée.</p></div>
+<div class="search"><input id="search" placeholder="Rechercher un produit..." oninput="renderProducts()"><button class="btn o" onclick="renderProducts()">Rechercher</button></div>
+<div class="categories">
+<button class="cat active" onclick="setCat('Tous',this)"><br>Tous</button>
+<button class="cat" onclick="setCat('Agriculture',this)"><br>Agriculture</button>
+<button class="cat" onclick="setCat('Poisson & fruits de mer',this)"><br>Poissons</button>
+<button class="cat" onclick="setCat('Viande & élevage',this)"><br>Élevage</button>
+<button class="cat" onclick="setCat('Alimentation',this)"><br>Alimentation</button>
+<button class="cat" onclick="setCat('Boissons naturelles',this)"><br>Boissons</button>
+<button class="cat" onclick="setCat('Parapharmacie',this)"><br>Parapharmacie</button>
+<button class="cat" onclick="setCat('Compléments alimentaires',this)"><br>Compléments</button>
+<button class="cat" onclick="setCat('Mode',this)"><br>Mode</button>
+<button class="cat" onclick="setCat('Maison',this)"><br>Maison</button>
+</div>
+<div id="products" class="products" style="margin-top:25px"></div>
+</div>
+</section>
+
+<section class="section alt" id="annonce">
+<div class="wrap">
+<div class="head"><h2> Publier une annonce</h2><p>Le vendeur soumet son produit. Il reste invisible au public jusqu'à validation.</p></div>
+<form class="form" id="adForm" onsubmit="submitAd(event)">
+<div class="notice"><b>Processus :</b> annonce → vérification → prix AL SAMADIYA → validation → publication.</div>
+<div class="grid2">
+<div class="field"><label>Nom du produit *</label><input id="adName" required placeholder="Ex. Mangue Kent"></div>
+<div class="field"><label>Catégorie *</label><select id="adCategory" required>
+<option value="">Choisir</option><option value="Agriculture">Agriculture</option><option value="Poisson & fruits de mer">Poisson & fruits de mer</option><option value="Viande & élevage">Viande & élevage</option><option value="Alimentation">Alimentation</option><option value="Boissons naturelles">Boissons naturelles</option><option value="Parapharmacie">Parapharmacie</option><option value="Compléments alimentaires">Compléments alimentaires</option><option value="Mode">Mode</option><option value="Maison">Maison</option>
+</select></div>
+</div>
+<div class="grid2">
+<div class="field"><label>Prix demandé par le propriétaire *</label><input id="adBuy" type="number" min="0" step="1" required placeholder="Ex. 250"></div>
+<div class="field"><label>Unité</label><select id="adUnit"><option>kg</option><option>tonne</option><option>sac</option><option>caisse</option><option>plateau</option><option>unité</option><option>litre</option><option>lot</option></select></div>
+</div>
+<div class="grid2">
+<div class="field"><label>Quantité disponible</label><input id="adQty" type="number" min="0" step="0.01" placeholder="Ex. 1000"></div>
+<div class="field"><label>Localisation</label><input id="adLocation" placeholder="Ex. Thiès, Touba..."></div>
+</div>
+<div class="field"><label>Photo du produit </label><input id="adPhoto" type="file" accept="image/" required onchange="previewPhoto(event)"><div id="preview" style="margin-top:8px"></div></div>
+<div class="grid2">
+<div class="field"><label>Vente en gros</label><select id="adGross"><option>Oui</option><option>Non</option></select></div>
+<div class="field"><label>Vente au détail</label><select id="adRetail"><option>Oui</option><option>Non</option></select></div>
+<div class="field"><label>Prix négociable</label><select id="adNegotiable"><option>Oui</option><option>Non</option></select></div>
+<div class="field"><label>Livraison disponible</label><select id="adDelivery"><option>Oui</option><option>Non</option></select></div>
+</div>
+<div class="grid2">
+<div class="field"><label>Nom du propriétaire *</label><input id="adOwner" required></div>
+<div class="field"><label>Téléphone *</label><input id="adPhone" required></div>
+</div>
+<div class="field"><label>Description</label><textarea id="adDescription" placeholder="Variété, qualité, conditionnement, date de récolte/fabrication, conservation..."></textarea></div>
+<button class="btn g" style="width:100%"> Envoyer pour validation</button>
+</form>
+</div>
+</section>
+
+<section class="section" id="admin">
+<div class="wrap">
+<div class="head"><h2> Administration</h2><p>Validation des annonces et fixation du prix AL SAMADIYA.</p></div>
+<div class="notice"><b>Prototype actuel :</b> les annonces sont stockées dans ce navigateur. La prochaine étape sera de connecter cette interface à une base de données en ligne pour que vendeur et administrateur travaillent depuis des appareils différents.</div>
+<div id="adminList"></div>
+</div>
 </section>
 
 <section class="section alt">
-  <div class="container">
-    <div class="section-head">
-      <h2>Une plateforme intelligente</h2>
-      <p>AL SAMADIYA MARKET connecte clients, vendeurs et livreurs dans un seul écosystème.</p>
-    </div>
-    <div class="features">
-      <div class="feature"><div class="icon">🔎</div><h3>Recherche intelligente</h3><p>Trouvez rapidement un produit, une boutique ou un vendeur selon votre besoin et votre zone.</p></div>
-      <div class="feature"><div class="icon">🚚</div><h3>Livraison à domicile</h3><p>Recevez vos achats à l'adresse indiquée et suivez l'état de votre commande.</p></div>
-      <div class="feature"><div class="icon">📍</div><h3>Proximité</h3><p>Découvrez les commerçants et produits disponibles près de chez vous.</p></div>
-    </div>
-  </div>
+<div class="wrap">
+<div class="head"><h2>Un marketplace pour plusieurs secteurs</h2></div>
+<div class="cards">
+<div class="card"><h3> Agriculture</h3><p>Fruits, légumes, céréales, tubercules et produits du champ.</p></div>
+<div class="card"><h3> Élevage & pêche</h3><p>Poissons, viandes, poulets, œufs et produits de la mer.</p></div>
+<div class="card"><h3> Boissons naturelles</h3><p>Bissap, gingembre, bouye, mangue, citronnade et autres boissons.</p></div>
+<div class="card"><h3> Parapharmacie</h3><p>Hygiène, soins, bébé et autres produits autorisés de parapharmacie.</p></div>
+<div class="card"><h3> Compléments alimentaires</h3><p>Vitamines, minéraux et compléments autorisés, soumis à validation avant publication.</p></div>
+<div class="card"><h3> Maison & Mode</h3><p>Vêtements, chaussures, accessoires et articles pour la maison.</p></div>
+</div>
+</div>
 </section>
 
-<section class="section" id="fonctionnement">
-  <div class="container">
-    <div class="section-head">
-      <h2>Comment ça marche ?</h2>
-      <p>Commander devient simple en quatre étapes.</p>
-    </div>
-    <div class="how">
-      <div class="step"><div class="num">1</div><h3>Choisissez</h3><p>Parcourez les produits et boutiques.</p></div>
-      <div class="step"><div class="num">2</div><h3>Commandez</h3><p>Ajoutez vos articles au panier.</p></div>
-      <div class="step"><div class="num">3</div><h3>Faites-vous livrer</h3><p>Indiquez votre adresse et votre créneau.</p></div>
-      <div class="step"><div class="num">4</div><h3>Recevez</h3><p>Suivez la livraison jusqu'à votre domicile.</p></div>
-    </div>
-  </div>
-</section>
+<footer id="contact"><div class="wrap"><div class="footerGrid"><div><h3>AL SAMADIYA MARKET</h3><p>Votre marché, livré chez vous.</p></div><div><b>Navigation</b><a class="footerLink" href="#produits">Produits</a><a class="footerLink" href="#annonce">Publier</a></div><div><b>Contact</b><a class="footerLink" href="tel:+221779306910"> 77 930 69 10</a><a class="footerLink" href="https://wa.me/221779306910" target="_blank"> WhatsApp</a></div></div></div></footer>
 
-<section class="section alt" id="vendeurs">
-  <div class="container">
-    <div class="cta">
-      <h2>Vous êtes commerçant ?</h2>
-      <p>Rejoignez AL SAMADIYA MARKET, présentez vos produits en ligne et développez vos ventes avec notre réseau de livraison.</p>
-      <div class="actions" style="justify-content:center">
-        <a class="btn btn-orange" href="https://wa.me/221779306910" target="_blank" rel="noopener">💬 Devenir vendeur</a>
-        <a class="btn btn-light" href="tel:+221779306910">📞 Nous contacter</a>
-      </div>
-    </div>
-  </div>
-</section>
-</main>
+<div id="cartOverlay" class="overlay" onclick="closeCart()">
+<div class="drawer" onclick="event.stopPropagation()"><button class="close" onclick="closeCart()">✕</button><h2> Mon panier</h2><div id="cartItems"></div><div class="total"><span>Total</span><span id="cartTotal">0 FCFA</span></div><button class="btn o" style="width:100%" onclick="openOrder()"> Passer la commande</button></div>
+</div>
 
-<footer id="contact">
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <h3>AL SAMADIYA MARKET</h3>
-        <p>Votre marché, livré chez vous.</p>
-        <p>Marketplace de vente, achat et livraison à domicile au Sénégal.</p>
-      </div>
-      <div>
-        <h3>Navigation</h3>
-        <a class="footer-link" href="#accueil">Accueil</a>
-        <a class="footer-link" href="#categories">Catégories</a>
-        <a class="footer-link" href="#fonctionnement">Fonctionnement</a>
-      </div>
-      <div>
-        <h3>Contact</h3>
-        <a class="footer-link" href="tel:+221779306910">📞 77 930 69 10</a>
-        <a class="footer-link" href="https://wa.me/221779306910" target="_blank" rel="noopener">💬 WhatsApp : 77 906 910</a>
-      </div>
-    </div>
-    <div class="copy">© 2026 AL SAMADIYA MARKET — Tous droits réservés.</div>
-  </div>
-</footer>
+<div id="orderModal" class="modal">
+<div class="modalBox"><button class="close" onclick="closeOrder()">✕</button><h2> Finaliser la commande</h2>
+<div id="orderSummary" class="summary"></div>
+<div class="field"><label>Type d'acheteur</label><select id="buyerType" onchange="updateOrder()"><option value="detail"> Acheteur au détail</option><option value="grossiste"> Grossiste / achat en gros</option></select></div>
+<div class="grid2"><div class="field"><label>Nom / entreprise *</label><input id="customerName"></div><div class="field"><label>Téléphone *</label><input id="customerPhone"></div></div>
+<div id="grossArea" style="display:none"><div class="grid2"><div class="field"><label>Prix final négocié (optionnel)</label><input id="negotiatedPrice" type="number" min="0"></div><div class="field"><label>Lieu de chargement / retrait</label><input id="pickupPlace"></div></div></div>
+<div class="field"><label>Mode de réception</label><div class="choice"><label><input type="radio" name="mode" value="retrait" checked onchange="updateOrder()">  Retrait</label><label><input type="radio" name="mode" value="livraison" onchange="updateOrder()">  Livraison</label></div></div>
+<div id="deliveryArea" style="display:none"><div class="field"><label>Adresse de livraison *</label><textarea id="deliveryAddress"></textarea></div><div class="field"><label>Frais de livraison</label><select id="deliveryFee" onchange="updateOrder()"><option value="500">500 FCFA</option><option value="1000">1 000 FCFA</option><option value="1500">1 500 FCFA</option></select></div></div>
+<div class="summary">Marchandise : <b id="orderSub">0 FCFA</b><br>Livraison : <b id="orderShip">0 FCFA</b><br><strong>Total : <span id="orderTotal">0 FCFA</span></strong></div>
+<button class="btn g" style="width:100%" onclick="sendOrder()"> Envoyer sur WhatsApp</button>
+</div>
+</div>
+
+<script>
+const baseProducts=[
+{id:1,name:"Mangue",category:"Agriculture",price:350,unit:"kg",updated:"15/08/2026",icon:""},
+{id:2,name:"Tomates",category:"Agriculture",price:1500,unit:"kg",updated:"15/08/2026",icon:""},
+{id:3,name:"Oignons",category:"Agriculture",price:1000,unit:"kg",updated:"15/08/2026",icon:""},
+{id:4,name:"Poisson frais",category:"Poisson & fruits de mer",price:3500,unit:"kg",updated:"15/08/2026",icon:""},
+{id:5,name:"Poulet",category:"Viande & élevage",price:4500,unit:"unité",updated:"15/08/2026",icon:""},
+{id:6,name:"Œufs - plateau de 30",category:"Viande & élevage",price:3000,unit:"plateau",updated:"15/08/2026",icon:""},
+{id:7,name:"Riz",category:"Alimentation",price:12000,unit:"sac",updated:"15/08/2026",icon:""},
+{id:8,name:"Jus de bissap",category:"Boissons naturelles",price:1000,unit:"litre",updated:"15/08/2026",icon:""},
+{id:9,name:"Jus de gingembre",category:"Boissons naturelles",price:1000,unit:"litre",updated:"15/08/2026",icon:""},
+{id:10,name:"Savon",category:"Parapharmacie",price:1500,unit:"unité",updated:"15/08/2026",icon:""},
+{id:11,name:"Complément alimentaire",category:"Compléments alimentaires",price:5000,unit:"boîte",updated:"15/08/2026",icon:""},
+{id:12,name:"T-shirt",category:"Mode",price:5000,unit:"unité",updated:"15/08/2026",icon:""},
+{id:13,name:"Ustensiles de cuisine",category:"Maison",price:7500,unit:"lot",updated:"15/08/2026",icon:""}
+];
+let ads=JSON.parse(localStorage.getItem("samadiyaAdsV3")||"[]");
+let cart=JSON.parse(localStorage.getItem("samadiyaCartV3")||"[]");
+let currentCategory="Tous",photoData="";
+
+function money(n){return Number(n||0).toLocaleString("fr-FR")+" FCFA"}
+function publishedProducts(){
+return [...baseProducts,...ads.filter(a=>a.status==="published").map(a=>({id:"a"+a.id,name:a.name,category:a.category,price:a.sellPrice,unit:a.unit,updated:a.updated,icon:"",photo:a.photo}))]
+}
+function renderProducts(){
+const q=document.getElementById("search").value.toLowerCase().trim();
+const list=publishedProducts().filter(p=>(currentCategory==="Tous"||p.category===currentCategory)&&(!q||p.name.toLowerCase().includes(q)||p.category.toLowerCase().includes(q)));
+document.getElementById("products").innerHTML=list.length?list.map(p=>`
+<article class="product"><div class="pic">${p.photo?<img src="${p.photo}" alt="${p.name}">:p.icon}</div>
+<div class="pbody"><div class="pcat">${p.category} • /${p.unit}</div><h3>${p.name}</h3>
+<div class="price">${money(p.price)} / ${p.unit}</div><div class="date"> Mis à jour le ${p.updated}</div>
+<button class="add" onclick="addToCart('${p.id}')"> Ajouter au panier</button></div></article>`).join(""):"<p>Aucun produit trouvé.</p>"
+}
+function setCat(c,b){currentCategory=c;document.querySelectorAll(".cat").forEach(x=>x.classList.remove("active"));if(b)b.classList.add("active");renderProducts()}
+function saveCart(){localStorage.setItem("samadiyaCartV3",JSON.stringify(cart))}
+function addToCart(id){const p=publishedProducts().find(x=>String(x.id)===String(id));if(!p)return;const x=cart.find(i=>String(i.id)===String(id));if(x)x.qty++;else cart.push({...p,qty:1});saveCart();updateCart();openCart()}
+function changeQty(id,d){const x=cart.find(i=>String(i.id)===String(id));if(!x)return;x.qty+=d;if(x.qty<=0)cart=cart.filter(i=>String(i.id)!==String(id));saveCart();updateCart()}
+function removeItem(id){cart=cart.filter(i=>String(i.id)!==String(id));saveCart();updateCart()}
+function updateCart(){document.getElementById("cartCount").textContent=cart.reduce((s,i)=>s+i.qty,0);document.getElementById("cartTotal").textContent=money(cart.reduce((s,i)=>s+i.price*i.qty,0));document.getElementById("cartItems").innerHTML=cart.length?cart.map(i=><div class="item"><b>${i.icon||""} ${i.name}</b><br>${money(i.price)} / ${i.unit}<div class="qty"><button onclick="changeQty('${i.id}',-1)">−</button><strong>${i.qty}</strong><button onclick="changeQty('${i.id}',1)">+</button><button class="light" onclick="removeItem('${i.id}')">Supprimer</button></div></div>).join(""):"Votre panier est vide."}
+function openCart(){document.getElementById("cartOverlay").classList.add("show")}function closeCart(){document.getElementById("cartOverlay").classList.remove("show")}
+
+function previewPhoto(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{photoData=r.result;document.getElementById("preview").innerHTML=<img src="${photoData}" style="max-width:200px;max-height:140px;border-radius:10px">};r.readAsDataURL(f)}
+function submitAd(e){
+e.preventDefault();if(!photoData)return alert("Ajoutez une photo.");
+const ad={id:Date.now(),name:adName.value.trim(),category:adCategory.value,buyPrice:Number(adBuy.value),unit:adUnit.value,quantity:Number(adQty.value||0),location:adLocation.value.trim(),photo:photoData,gross:adGross.value,retail:adRetail.value,negotiable:adNegotiable.value,delivery:adDelivery.value,owner:adOwner.value.trim(),phone:adPhone.value.trim(),description:adDescription.value.trim(),status:"pending",updated:new Date().toLocaleDateString("fr-FR")};
+ads.push(ad);localStorage.setItem("samadiyaAdsV3",JSON.stringify(ads));e.target.reset();photoData="";document.getElementById("preview").innerHTML="";renderAdmin();alert("Annonce envoyée. Elle est en attente de validation.");document.getElementById("admin").scrollIntoView({behavior:"smooth"})
+}
+function renderAdmin(){
+const box=document.getElementById("adminList"),pending=ads.filter(a=>a.status==="pending");
+if(!pending.length){box.innerHTML='<div class="notice">Aucune annonce en attente.</div>';return}
+box.innerHTML=pending.map(a=>`<div class="pending"><img src="${a.photo}" alt="${a.name}"><span class="status">EN ATTENTE</span><h3>${a.name}</h3><p>Propriétaire : <b>${a.owner}</b> — ${a.phone}<br>Prix demandé : <b>${money(a.buyPrice)} / ${a.unit}</b><br>Quantité : ${a.quantity||"non précisée"} ${a.unit} — ${a.location||"non précisée"}<br>Gros : ${a.gross} • Détail : ${a.retail} • Négociable : ${a.negotiable} • Livraison : ${a.delivery}</p>
+<div class="adminRow"><div><label>Prix de vente AL SAMADIYA</label><input id="sell-${a.id}" type="number" min="${a.buyPrice}" placeholder="Ex. 350" oninput="calcMargin(${a.id})"></div><div><label>Marge</label><input id="margin-${a.id}" disabled placeholder="Automatique"></div></div>
+<div class="tools"><button class="btn g" onclick="publishAd(${a.id})"> Valider et publier</button><button class="btn light" onclick="rejectAd(${a.id})"> Refuser</button></div></div>`).join("")
+}
+function calcMargin(id){const a=ads.find(x=>x.id===id),v=Number(document.getElementById("sell-"+id).value||0);document.getElementById("margin-"+id).value=(v-a.buyPrice).toLocaleString("fr-FR")+" FCFA / "+a.unit}
+function publishAd(id){
+const a=ads.find(x=>x.id===id),v=Number(document.getElementById("sell-"+id).value);
+if(!v||v<a.buyPrice)return alert("Le prix de vente doit être supérieur ou égal au prix demandé.");
+a.sellPrice=v;a.margin=v-a.buyPrice;a.status="published";a.updated=new Date().toLocaleDateString("fr-FR");localStorage.setItem("samadiyaAdsV3",JSON.stringify(ads));renderAdmin();renderProducts();alert("Annonce validée et publiée.")
+}
+function rejectAd(id){const a=ads.find(x=>x.id===id);a.status="rejected";localStorage.setItem("samadiyaAdsV3",JSON.stringify(ads));renderAdmin();alert("Annonce refusée.")}
+
+function openOrder(){
+if(!cart.length)return alert("Votre panier est vide.");
+closeCart();document.getElementById("orderModal").classList.add("show");updateOrder()
+}
+function closeOrder(){document.getElementById("orderModal").classList.remove("show")}
+function updateOrder(){
+const gross=document.getElementById("buyerType").value==="grossiste";document.getElementById("grossArea").style.display=gross?"block":"none";
+const delivery=document.querySelector('input[name="mode"]:checked').value==="livraison";document.getElementById("deliveryArea").style.display=delivery?"block":"none";
+const sub=cart.reduce((s,i)=>s+i.price*i.qty,0),ship=delivery?Number(document.getElementById("deliveryFee").value):0;
+document.getElementById("orderSummary").innerHTML=cart.map(i=>• ${i.name} — ${i.qty} × ${money(i.price)}).join("<br>");
+document.getElementById("orderSub").textContent=money(sub);document.getElementById("orderShip").textContent=money(ship);document.getElementById("orderTotal").textContent=money(sub+ship)
+}
+function sendOrder(){
+const name=document.getElementById("customerName").value.trim(),phone=document.getElementById("customerPhone").value.trim(),buyer=document.getElementById("buyerType").value,mode=document.querySelector('input[name="mode"]:checked').value,address=document.getElementById("deliveryAddress").value.trim(),pickup=document.getElementById("pickupPlace").value.trim(),neg=document.getElementById("negotiatedPrice").value;
+if(!name||!phone)return alert("Nom et téléphone obligatoires.");if(mode==="livraison"&&!address)return alert("Adresse de livraison obligatoire.");if(buyer==="grossiste"&&mode==="retrait"&&!pickup)return alert("Indiquez le lieu de chargement/retrait.");
+const sub=cart.reduce((s,i)=>s+i.price*i.qty,0),ship=mode==="livraison"?Number(document.getElementById("deliveryFee").value):0,id="ASM-"+Date.now().toString().slice(-8);
+let m= AL SAMADIYA MARKET%0A*COMMANDE ${id}*%0A ${encodeURIComponent(name)}%0A ${encodeURIComponent(phone)}%0AType : ${buyer==="grossiste"?"GROSSISTE":"DETAIL"}%0A%0A*PRODUITS*%0A;
+cart.forEach(i=>m+=• ${encodeURIComponent(i.name)} — ${i.qty} × ${i.price} FCFA = ${i.qty*i.price} FCFA%0A);
+m+=%0AMarchandise : ${sub} FCFA%0A;
+if(buyer==="grossiste"&&neg)m+=Prix final négocié communiqué : ${neg} FCFA%0A;
+m+=Réception : ${mode==="livraison"?"LIVRAISON":"RETRAIT"}%0A;
+if(mode==="livraison")m+=Adresse : ${encodeURIComponent(address)}%0AFrais livraison : ${ship} FCFA%0A;else m+=Lieu de chargement/retrait : ${encodeURIComponent(pickup)}%0A;
+m+=%0A*TOTAL : ${sub+ship} FCFA*%0APrix consultés le ${new Date().toLocaleDateString("fr-FR")};
+window.open("https://wa.me/221779306910?text="+m,"_blank")
+}
+renderProducts();updateCart();renderAdmin();
+</script>
 </body>
 </html>
