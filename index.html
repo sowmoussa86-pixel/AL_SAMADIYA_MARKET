@@ -106,8 +106,13 @@ footer{background:#063d29;color:#fff;padding:30px}.footerGrid{display:grid;grid-
 <section class="section" id="admin">
 <div class="wrap">
 <div class="head"><h2> Administration</h2><p>Validation des annonces et fixation du prix AL SAMADIYA.</p></div>
-<div class="notice"><b>Prototype actuel :</b> les annonces sont stockées dans ce navigateur. La prochaine étape sera de connecter cette interface à une base de données en ligne pour que vendeur et administrateur travaillent depuis des appareils différents.</div>
+<div class="notice"><b>Gestion des annonces :</b> chaque annonce envoyée par un vendeur arrive ici pour contrôle avant publication. L'administrateur vérifie le produit, fixe le prix AL SAMADIYA et décide de sa publication.</div>
+<div style="margin-top:28px;padding:18px;border:1px solid var(--line);border-radius:14px;background:#fff">
+<h3 style="margin:0 0 6px;color:var(--green)">📋 Annonces en attente de validation</h3>
+<p style="margin:0 0 16px;color:#666">Vérifiez les informations, fixez le prix de vente AL SAMADIYA, puis validez ou refusez l'annonce.</p>
 <div id="adminList"></div>
+</div>
+<div class="notice" style="margin-top:18px"><b>À prévoir pour la version finale :</b> connecter cette administration à une base de données en ligne afin que les vendeurs puissent déposer leurs annonces depuis leur téléphone et que l'administrateur puisse les valider depuis n'importe quel appareil.</div>
 </div>
 </section>
 
@@ -202,7 +207,10 @@ ads.push(ad);localStorage.setItem("samadiyaAdsV3",JSON.stringify(ads));e.target.
 }
 function renderAdmin(){
 const box=document.getElementById("adminList"),pending=ads.filter(a=>a.status==="pending");
-if(!pending.length){box.innerHTML='<div class="notice">Aucune annonce en attente.</div>';return}
+if(!pending.length){
+box.innerHTML='<div style="padding:20px;border:1px dashed #cbd8d1;border-radius:12px;text-align:center;color:#666;background:#fafdfb"><b>Aucune annonce en attente.</b><br><span style="font-size:14px">Les nouvelles annonces envoyées par les vendeurs apparaîtront ici.</span></div>';
+return
+}
 box.innerHTML=pending.map(a=>`<div class="pending"><img src="${a.photo}" alt="${a.name}"><span class="status">EN ATTENTE</span><h3>${a.name}</h3><p>Propriétaire : <b>${a.owner}</b> — ${a.phone}<br>Prix demandé : <b>${money(a.buyPrice)} / ${a.unit}</b><br>Quantité : ${a.quantity||"non précisée"} ${a.unit} — ${a.location||"non précisée"}<br>Gros : ${a.gross} • Détail : ${a.retail} • Négociable : ${a.negotiable} • Livraison : ${a.delivery}</p>
 <div class="adminRow"><div><label>Prix de vente AL SAMADIYA</label><input id="sell-${a.id}" type="number" min="${a.buyPrice}" placeholder="Ex. 350" oninput="calcMargin(${a.id})"></div><div><label>Marge</label><input id="margin-${a.id}" disabled placeholder="Automatique"></div></div>
 <div class="tools"><button class="btn g" onclick="publishAd(${a.id})"> Valider et publier</button><button class="btn light" onclick="rejectAd(${a.id})"> Refuser</button></div></div>`).join("")
