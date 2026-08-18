@@ -86,7 +86,7 @@ footer{background:#063d29;color:#fff;padding:30px}.footerGrid{display:grid;grid-
 <div class="field"><label>Quantité disponible</label><input id="adQty" type="number" min="0" step="0.01" placeholder="Ex. 1000"></div>
 <div class="field"><label>Localisation</label><input id="adLocation" placeholder="Ex. Thiès, Touba..."></div>
 </div>
-<div class="field"><label>Photo du produit </label><input id="adPhoto" type="file" accept="image/" required onchange="previewPhoto(event)"><div id="preview" style="margin-top:8px"></div></div>
+<div class="field"><label>Photo du produit </label><input id="adPhoto" type="file" accept="image/*" required onchange="previewPhoto(event)"><div id="preview" style="margin-top:8px"></div></div>
 <div class="grid2">
 <div class="field"><label>Vente en gros</label><select id="adGross"><option>Oui</option><option>Non</option></select></div>
 <div class="field"><label>Vente au détail</label><select id="adRetail"><option>Oui</option><option>Non</option></select></div>
@@ -185,7 +185,16 @@ function removeItem(id){cart=cart.filter(i=>String(i.id)!==String(id));saveCart(
 function updateCart(){document.getElementById("cartCount").textContent=cart.reduce((s,i)=>s+i.qty,0);document.getElementById("cartTotal").textContent=money(cart.reduce((s,i)=>s+i.price*i.qty,0));document.getElementById("cartItems").innerHTML=cart.length?cart.map(i=><div class="item"><b>${i.icon||""} ${i.name}</b><br>${money(i.price)} / ${i.unit}<div class="qty"><button onclick="changeQty('${i.id}',-1)">−</button><strong>${i.qty}</strong><button onclick="changeQty('${i.id}',1)">+</button><button class="light" onclick="removeItem('${i.id}')">Supprimer</button></div></div>).join(""):"Votre panier est vide."}
 function openCart(){document.getElementById("cartOverlay").classList.add("show")}function closeCart(){document.getElementById("cartOverlay").classList.remove("show")}
 
-function previewPhoto(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{photoData=r.result;document.getElementById("preview").innerHTML=<img src="${photoData}" style="max-width:200px;max-height:140px;border-radius:10px">};r.readAsDataURL(f)}
+function previewPhoto(e){
+const f=e.target.files[0];
+if(!f)return;
+const r=new FileReader();
+r.onload=()=>{
+photoData=r.result;
+document.getElementById("preview").innerHTML=`<img src="${photoData}" style="max-width:200px;max-height:140px;border-radius:10px">`;
+};
+r.readAsDataURL(f);
+}
 function submitAd(e){
 e.preventDefault();if(!photoData)return alert("Ajoutez une photo.");
 const ad={id:Date.now(),name:adName.value.trim(),category:adCategory.value,buyPrice:Number(adBuy.value),unit:adUnit.value,quantity:Number(adQty.value||0),location:adLocation.value.trim(),photo:photoData,gross:adGross.value,retail:adRetail.value,negotiable:adNegotiable.value,delivery:adDelivery.value,owner:adOwner.value.trim(),phone:adPhone.value.trim(),description:adDescription.value.trim(),status:"pending",updated:new Date().toLocaleDateString("fr-FR")};
@@ -215,21 +224,52 @@ function updateOrder(){
 const gross=document.getElementById("buyerType").value==="grossiste";document.getElementById("grossArea").style.display=gross?"block":"none";
 const delivery=document.querySelector('input[name="mode"]:checked').value==="livraison";document.getElementById("deliveryArea").style.display=delivery?"block":"none";
 const sub=cart.reduce((s,i)=>s+i.price*i.qty,0),ship=delivery?Number(document.getElementById("deliveryFee").value):0;
-document.getElementById("orderSummary").innerHTML=cart.map(i=>• ${i.name} — ${i.qty} × ${money(i.price)}).join("<br>");
+document.getElementById("orderSummary").innerHTML=cart.map(i=>`• ${i.name} — ${i.qty} × ${money(i.price)}`).join("<br>");
 document.getElementById("orderSub").textContent=money(sub);document.getElementById("orderShip").textContent=money(ship);document.getElementById("orderTotal").textContent=money(sub+ship)
 }
 function sendOrder(){
-const name=document.getElementById("customerName").value.trim(),phone=document.getElementById("customerPhone").value.trim(),buyer=document.getElementById("buyerType").value,mode=document.querySelector('input[name="mode"]:checked').value,address=document.getElementById("deliveryAddress").value.trim(),pickup=document.getElementById("pickupPlace").value.trim(),neg=document.getElementById("negotiatedPrice").value;
-if(!name||!phone)return alert("Nom et téléphone obligatoires.");if(mode==="livraison"&&!address)return alert("Adresse de livraison obligatoire.");if(buyer==="grossiste"&&mode==="retrait"&&!pickup)return alert("Indiquez le lieu de chargement/retrait.");
-const sub=cart.reduce((s,i)=>s+i.price*i.qty,0),ship=mode==="livraison"?Number(document.getElementById("deliveryFee").value):0,id="ASM-"+Date.now().toString().slice(-8);
-let m= AL SAMADIYA MARKET%0A*COMMANDE ${id}*%0A ${encodeURIComponent(name)}%0A ${encodeURIComponent(phone)}%0AType : ${buyer==="grossiste"?"GROSSISTE":"DETAIL"}%0A%0A*PRODUITS*%0A;
-cart.forEach(i=>m+=• ${encodeURIComponent(i.name)} — ${i.qty} × ${i.price} FCFA = ${i.qty*i.price} FCFA%0A);
-m+=%0AMarchandise : ${sub} FCFA%0A;
-if(buyer==="grossiste"&&neg)m+=Prix final négocié communiqué : ${neg} FCFA%0A;
-m+=Réception : ${mode==="livraison"?"LIVRAISON":"RETRAIT"}%0A;
-if(mode==="livraison")m+=Adresse : ${encodeURIComponent(address)}%0AFrais livraison : ${ship} FCFA%0A;else m+=Lieu de chargement/retrait : ${encodeURIComponent(pickup)}%0A;
-m+=%0A*TOTAL : ${sub+ship} FCFA*%0APrix consultés le ${new Date().toLocaleDateString("fr-FR")};
-window.open("https://wa.me/221779306910?text="+m,"_blank")
+const name=document.getElementById("customerName").value.trim();
+const phone=document.getElementById("customerPhone").value.trim();
+const buyer=document.getElementById("buyerType").value;
+const mode=document.querySelector('input[name="mode"]:checked').value;
+const address=document.getElementById("deliveryAddress").value.trim();
+const pickup=document.getElementById("pickupPlace").value.trim();
+const neg=document.getElementById("negotiatedPrice").value;
+
+if(!name||!phone)return alert("Nom et téléphone obligatoires.");
+if(mode==="livraison"&&!address)return alert("Adresse de livraison obligatoire.");
+if(buyer==="grossiste"&&mode==="retrait"&&!pickup)return alert("Indiquez le lieu de chargement/retrait.");
+
+const sub=cart.reduce((s,i)=>s+i.price*i.qty,0);
+const ship=mode==="livraison"?Number(document.getElementById("deliveryFee").value):0;
+const id="ASM-"+Date.now().toString().slice(-8);
+
+let lines=[];
+lines.push("AL SAMADIYA MARKET");
+lines.push("COMMANDE "+id);
+lines.push("Nom / entreprise : "+name);
+lines.push("Téléphone : "+phone);
+lines.push("Type : "+(buyer==="grossiste"?"GROSSISTE":"DETAIL"));
+lines.push("");
+lines.push("PRODUITS");
+cart.forEach(i=>{
+  lines.push("• "+i.name+" — "+i.qty+" × "+i.price+" FCFA = "+(i.qty*i.price)+" FCFA");
+});
+lines.push("");
+lines.push("Marchandise : "+sub+" FCFA");
+if(buyer==="grossiste"&&neg)lines.push("Prix final négocié communiqué : "+neg+" FCFA");
+lines.push("Réception : "+(mode==="livraison"?"LIVRAISON":"RETRAIT"));
+if(mode==="livraison"){
+  lines.push("Adresse : "+address);
+  lines.push("Frais livraison : "+ship+" FCFA");
+}else if(pickup){
+  lines.push("Lieu de chargement/retrait : "+pickup);
+}
+lines.push("TOTAL : "+(sub+ship)+" FCFA");
+lines.push("Prix consultés le "+new Date().toLocaleDateString("fr-FR"));
+
+const message=encodeURIComponent(lines.join("\n"));
+window.open("https://wa.me/221779306910?text="+message,"_blank");
 }
 renderProducts();updateCart();renderAdmin();
 </script>
