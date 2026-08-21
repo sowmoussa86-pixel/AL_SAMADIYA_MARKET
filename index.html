@@ -190,20 +190,245 @@ function removeItem(id){cart=cart.filter(i=>String(i.id)!==String(id));saveCart(
 function updateCart(){document.getElementById("cartCount").textContent=cart.reduce((s,i)=>s+i.qty,0);document.getElementById("cartTotal").textContent=money(cart.reduce((s,i)=>s+i.price*i.qty,0));document.getElementById("cartItems").innerHTML=cart.length?cart.map(i=><div class="item"><b>${i.icon||""} ${i.name}</b><br>${money(i.price)} / ${i.unit}<div class="qty"><button onclick="changeQty('${i.id}',-1)">−</button><strong>${i.qty}</strong><button onclick="changeQty('${i.id}',1)">+</button><button class="light" onclick="removeItem('${i.id}')">Supprimer</button></div></div>).join(""):"Votre panier est vide."}
 function openCart(){document.getElementById("cartOverlay").classList.add("show")}function closeCart(){document.getElementById("cartOverlay").classList.remove("show")}
 
-function previewPhoto(e){
-const f=e.target.files[0];
-if(!f)return;
-const r=new FileReader();
-r.onload=()=>{
-photoData=r.result;
-document.getElementById("preview").innerHTML=`<img src="${photoData}" style="max-width:200px;max-height:140px;border-radius:10px">`;
-};
-r.readAsDataURL(f);
+function showError(message){
+  let box = document.getElementById("errorBox");
+
+  if(!box){
+    box = document.createElement("div");
+    box.id = "errorBox";
+    box.style.cssText = `
+      background:#fff1f0;
+      color:#b42318;
+      border:1px solid #f5b5b0;
+      border-left:5px solid #b42318;
+      padding:14px;
+      border-radius:10px;
+      margin:12px 0;
+      font-weight:700;
+    `;
+
+    const form = document.getElementById("adForm");
+    form.prepend(box);
+  }
+
+  box.innerHTML = "⚠️ " + message;
+  box.scrollIntoView({behavior:"smooth", block:"center"});
 }
+
+function clearError(){
+  const box = document.getElementById("errorBox");
+  if(box) box.remove();
+}
+
+function compressImage(file, maxWidth=1000, quality=0.75){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+
+    reader.onerror = () => reject(new Error("Impossible de lire la photo."));
+
+    reader.onload = () => {
+      const img = new Image();
+
+      img.onerror = () => reject(new Error("Le fichier sélectionné n'est pas une image valide."));
+
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if(width > maxWidth){
+          height = Math.round(height * maxWidth / width);
+          width = maxWidth;
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+
+        if(!ctx){
+          reject(new Error("Le navigateur ne permet pas de traiter cette image."));
+          return;
+        }
+
+        ctx.drawImage(img,0,0,width,height);
+
+        const compressed = canvas.toDataURL("image/jpeg",quality);
+
+        resolve(compressed);
+      };
+
+      img.src = reader.result;
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+async function previewPhoto(e){
+  clearError();
+
+  const f = e.target.files[0];
+
+  if(!f){
+    photoData = "";
+    document.getElementById("preview").innerHTML = "";
+    return;
+  }
+
+  if(!f.type.startsWith("image/")){
+    e.target.value = "";
+    photoData = "";
+    showError("Veuillez sélectionner une image JPG, PNG ou autre format image.");
+    return;
+  }
+
+  try{
+    photoData = await compressImage(f);
+
+    document.getElementById("preview").innerHTML = `
+      <img src="${photoData}"
+      style="max-width:200px;max-height:140px;border-radius:10px">
+      <div style="font-size:12px;color:#68776f;margin-top:5px">
+        ✓ Photo préparée et compressée
+      </div>
+    `;
+
+  }catch(error){
+    console.error("Erreur photo :",error);
+    photoData = "";
+    e.target.value = "";
+    document.getElementById("preview").innerHTML = "";
+    showError("Impossible de traiter la photo : " + error.message);
+  }
+}
+
 function submitAd(e){
-e.preventDefault();if(!photoData)return alert("Ajoutez une photo.");
-const ad={id:Date.now(),name:adName.value.trim(),category:adCategory.value,buyPrice:Number(adBuy.value),unit:adUnit.value,quantity:Number(adQty.value||0),location:adLocation.value.trim(),photo:photoData,gross:adGross.value,retail:adRetail.value,negotiable:adNegotiable.value,delivery:adDelivery.value,owner:adOwner.value.trim(),phone:adPhone.value.trim(),description:adDescription.value.trim(),status:"pending",updated:new Date().toLocaleDateString("fr-FR")};
-ads.push(ad);localStorage.setItem("samadiyaAdsV3",JSON.stringify(ads));e.target.reset();photoData="";document.getElementById("preview").innerHTML="";renderAdmin();alert("Annonce envoyée. Elle est en attente de validation.");document.getElementById("admin").scrollIntoView({behavior:"smooth"})
+  e.preventDefault();
+  clearError();
+
+  try{
+
+    if(!photoData){
+      showError("Ajoutez une photo du produit avant d'envoyer l'annonce.");
+      return;
+    }
+
+    const ad = {
+      id: Date.now(),
+      name: adName.value.trim(),
+      category: adCategory.value,
+      buyPrice: Number(adBuy.value),
+      unit: adUnit.value,
+      quantity: Number(adQty.value || 0),
+      location: adLocation.value.trim(),
+      photo: photoData,
+      gross: adGross.value,
+      retail: adRetail.value,
+      negotiable: adNegotiable.value,
+      delivery: adDelivery.value,
+      owner: adOwner.value.trim(),
+      phone: adPhone.value.trim(),
+      description: adDescription.value.trim(),
+      status: "pending",
+      updated: new Date().toLocaleDateString("fr-FR")
+    };
+
+    /* Vérification des informations obligatoires */
+    if(!ad.name){
+      showError("Le nom du produit est obligatoire.");
+      return;
+    }
+
+    if(!ad.category){
+      showError("Veuillez choisir une catégorie.");
+      return;
+    }
+
+    if(!ad.buyPrice || ad.buyPrice < 0){
+      showError("Veuillez saisir un prix demandé valide.");
+      return;
+    }
+
+    if(!ad.owner){
+      showError("Le nom du propriétaire est obligatoire.");
+      return;
+    }
+
+    if(!ad.phone){
+      showError("Le téléphone du propriétaire est obligatoire.");
+      return;
+    }
+
+    /* Ajout de l'annonce */
+    ads.push(ad);
+
+    /* Tentative d'enregistrement */
+    try{
+      localStorage.setItem(
+        "samadiyaAdsV3",
+        JSON.stringify(ads)
+      );
+    }catch(storageError){
+
+      /* Annulation si l'enregistrement échoue */
+      ads = ads.filter(a => a.id !== ad.id);
+
+      console.error("Erreur stockage :",storageError);
+
+      showError(
+        "L'annonce n'a pas pu être enregistrée dans ce navigateur. " +
+        "Le stockage est peut-être plein. " +
+        "Essayez avec une photo plus petite ou videz les données du site."
+      );
+
+      return;
+    }
+
+    /* Vérification réelle */
+    const verification = JSON.parse(
+      localStorage.getItem("samadiyaAdsV3") || "[]"
+    );
+
+    const saved = verification.find(a => a.id === ad.id);
+
+    if(!saved){
+      ads = verification;
+
+      showError(
+        "L'annonce n'a pas été retrouvée après son enregistrement. " +
+        "Veuillez réessayer."
+      );
+
+      return;
+    }
+
+    /* Tout est OK */
+    e.target.reset();
+    photoData = "";
+
+    document.getElementById("preview").innerHTML = "";
+
+    renderAdmin();
+
+    alert(
+      "✅ Annonce envoyée avec succès !\n\n" +
+      "Elle est maintenant EN ATTENTE DE VALIDATION."
+    );
+
+    document.getElementById("admin").scrollIntoView({
+      behavior:"smooth"
+    });
+
+  }catch(error){
+
+    console.error("ERREUR AL SAMADIYA :",error);
+
+    showError(
+      "Une erreur inattendue est survenue : " +
+      error.message
+    );
+  }
 }
 function renderAdmin(){
 const box=document.getElementById("adminList"),pending=ads.filter(a=>a.status==="pending");
