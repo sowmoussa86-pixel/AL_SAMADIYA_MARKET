@@ -1,3 +1,4 @@
+```
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -86,7 +87,7 @@ footer{background:#063d29;color:#fff;padding:30px}.footerGrid{display:grid;grid-
 <div class="field"><label>Quantité disponible</label><input id="adQty" type="number" min="0" step="0.01" placeholder="Ex. 1000"></div>
 <div class="field"><label>Localisation</label><input id="adLocation" placeholder="Ex. Thiès, Touba..."></div>
 </div>
-<div class="field"><label>Photo du produit </label><input id="adPhoto" type="file" accept="image/*" required onchange="previewPhoto(event)"><div id="preview" style="margin-top:8px"></div></div>
+<div class="field"><label>Photo du produit </label><input id="adPhoto" type="file" accept="image/*" capture="environment" required onchange="previewPhoto(event)"><div id="preview" style="margin-top:8px"></div></div>
 <div class="grid2">
 <div class="field"><label>Vente en gros</label><select id="adGross"><option>Oui</option><option>Non</option></select></div>
 <div class="field"><label>Vente au détail</label><select id="adRetail"><option>Oui</option><option>Non</option></select></div>
@@ -149,7 +150,13 @@ footer{background:#063d29;color:#fff;padding:30px}.footerGrid{display:grid;grid-
 </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL="https://fxydjemipaerfxgcjuz.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_Inhj9ZhtHrWxuT7Uv-AUvg_HeJos3Fe";
+const {createClient}=supabase;
+const db=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+
 const baseProducts=[
 {id:1,name:"Mangue",category:"Agriculture",price:350,unit:"kg",updated:"15/08/2026",icon:""},
 {id:2,name:"Tomates",category:"Agriculture",price:1500,unit:"kg",updated:"15/08/2026",icon:""},
@@ -165,346 +172,227 @@ const baseProducts=[
 {id:12,name:"T-shirt",category:"Mode",price:5000,unit:"unité",updated:"15/08/2026",icon:""},
 {id:13,name:"Ustensiles de cuisine",category:"Maison",price:7500,unit:"lot",updated:"15/08/2026",icon:""}
 ];
-let ads=JSON.parse(localStorage.getItem("samadiyaAdsV3")||"[]");
+
+let ads=[];
 let cart=JSON.parse(localStorage.getItem("samadiyaCartV3")||"[]");
 let currentCategory="Tous",photoData="";
 
 function money(n){return Number(n||0).toLocaleString("fr-FR")+" FCFA"}
-function publishedProducts(){
-return [...baseProducts,...ads.filter(a=>a.status==="published").map(a=>({id:"a"+a.id,name:a.name,category:a.category,price:a.sellPrice,unit:a.unit,updated:a.updated,icon:"",photo:a.photo}))]
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function bool(v){return v===true||v==="Oui"||v==="true"||v===1}
+
+function rowToAd(a){
+return {id:a.id,name:a.nom_produit,category:a.categorie,buyPrice:Number(a.prix_demande||0),
+sellPrice:a.prix_al_samadiya==null?null:Number(a.prix_al_samadiya),unit:a.unite,
+quantity:Number(a.quantite||0),location:a.localisation||"",photo:a.photo_url||"",
+gross:bool(a.vente_gros)?"Oui":"Non",retail:bool(a.vente_detail)?"Oui":"Non",
+negotiable:bool(a.prix_negociable)?"Oui":"Non",delivery:bool(a.livraison_disponible)?"Oui":"Non",
+owner:a.nom_proprietaire||"",phone:a.telephone||"",description:a.description||"",
+status:a.statut,updated:a.date_validation?new Date(a.date_validation).toLocaleDateString("fr-FR"):
+new Date(a.created_at).toLocaleDateString("fr-FR")};
 }
+
+async function loadAds(){
+const {data,error}=await db.from("annonces").select("*").order("created_at",{ascending:false});
+if(error){console.error(error);return}
+ads=(data||[]).map(rowToAd);
+renderProducts();renderAdmin();
+}
+
+function publishedProducts(){
+return [
+...baseProducts.map(p=>({...p,quantity:null,adId:null})),
+...ads.filter(a=>a.status==="validee"&&a.quantity>0).map(a=>({
+id:"a"+a.id,adId:a.id,name:a.name,category:a.category,price:a.sellPrice,
+unit:a.unit,quantity:a.quantity,updated:a.updated,icon:"",photo:a.photo,
+owner:a.owner,location:a.location
+}))
+];
+}
+
 function renderProducts(){
 const q=document.getElementById("search").value.toLowerCase().trim();
-const list=publishedProducts().filter(p=>(currentCategory==="Tous"||p.category===currentCategory)&&(!q||p.name.toLowerCase().includes(q)||p.category.toLowerCase().includes(q)));
+const list=publishedProducts().filter(p=>
+(currentCategory==="Tous"||p.category===currentCategory)&&
+(!q||p.name.toLowerCase().includes(q)||p.category.toLowerCase().includes(q)));
 document.getElementById("products").innerHTML=list.length?list.map(p=>`
-<article class="product"><div class="pic">${p.photo?<img src="${p.photo}" alt="${p.name}">:p.icon}</div>
-<div class="pbody"><div class="pcat">${p.category} • /${p.unit}</div><h3>${p.name}</h3>
-<div class="price">${money(p.price)} / ${p.unit}</div><div class="date"> Mis à jour le ${p.updated}</div>
-<button class="add" onclick="addToCart('${p.id}')"> Ajouter au panier</button></div></article>`).join(""):"<p>Aucun produit trouvé.</p>"
+<article class="product">
+<div class="pic">${p.photo?`<img src="${esc(p.photo)}" alt="${esc(p.name)}">`:p.icon}</div>
+<div class="pbody"><div class="pcat">${esc(p.category)} • /${esc(p.unit)}</div>
+<h3>${esc(p.name)}</h3><div class="price">${money(p.price)} / ${esc(p.unit)}</div>
+${p.quantity!==null?`<div class="small">Stock : <b>${p.quantity} ${esc(p.unit)}</b></div><div class="small">Vendeur : ${esc(p.owner)}</div>`:""}
+<div class="date">Mis à jour le ${esc(p.updated)}</div>
+<button class="add" onclick="addToCart('${p.id}')">Ajouter au panier</button>
+${p.adId?`<button class="btn light" style="width:100%;margin-top:7px" onclick="reportAd(${p.adId})">⚠️ Signaler un problème</button>`:""}
+</div></article>`).join(""):"<p>Aucun produit trouvé.</p>";
 }
+
 function setCat(c,b){currentCategory=c;document.querySelectorAll(".cat").forEach(x=>x.classList.remove("active"));if(b)b.classList.add("active");renderProducts()}
 function saveCart(){localStorage.setItem("samadiyaCartV3",JSON.stringify(cart))}
-function addToCart(id){const p=publishedProducts().find(x=>String(x.id)===String(id));if(!p)return;const x=cart.find(i=>String(i.id)===String(id));if(x)x.qty++;else cart.push({...p,qty:1});saveCart();updateCart();openCart()}
-function changeQty(id,d){const x=cart.find(i=>String(i.id)===String(id));if(!x)return;x.qty+=d;if(x.qty<=0)cart=cart.filter(i=>String(i.id)!==String(id));saveCart();updateCart()}
+
+function addToCart(id){
+const p=publishedProducts().find(x=>String(x.id)===String(id));if(!p)return;
+const x=cart.find(i=>String(i.id)===String(id)),current=x?x.qty:0;
+if(p.quantity!==null&&current>=p.quantity)return alert("Stock disponible insuffisant.");
+if(x)x.qty++;else cart.push({...p,qty:1});saveCart();updateCart();openCart();
+}
+
+function changeQty(id,d){
+const x=cart.find(i=>String(i.id)===String(id));if(!x)return;
+const p=publishedProducts().find(i=>String(i.id)===String(id)),next=x.qty+d;
+if(next<1)cart=cart.filter(i=>String(i.id)!==String(id));
+else if(p&&p.quantity!==null&&next>p.quantity)return alert("Stock disponible insuffisant.");
+else x.qty=next;saveCart();updateCart();
+}
 function removeItem(id){cart=cart.filter(i=>String(i.id)!==String(id));saveCart();updateCart()}
-function updateCart(){document.getElementById("cartCount").textContent=cart.reduce((s,i)=>s+i.qty,0);document.getElementById("cartTotal").textContent=money(cart.reduce((s,i)=>s+i.price*i.qty,0));document.getElementById("cartItems").innerHTML=cart.length?cart.map(i=><div class="item"><b>${i.icon||""} ${i.name}</b><br>${money(i.price)} / ${i.unit}<div class="qty"><button onclick="changeQty('${i.id}',-1)">−</button><strong>${i.qty}</strong><button onclick="changeQty('${i.id}',1)">+</button><button class="light" onclick="removeItem('${i.id}')">Supprimer</button></div></div>).join(""):"Votre panier est vide."}
-function openCart(){document.getElementById("cartOverlay").classList.add("show")}function closeCart(){document.getElementById("cartOverlay").classList.remove("show")}
+function updateCart(){
+document.getElementById("cartCount").textContent=cart.reduce((s,i)=>s+i.qty,0);
+document.getElementById("cartTotal").textContent=money(cart.reduce((s,i)=>s+i.price*i.qty,0));
+document.getElementById("cartItems").innerHTML=cart.length?cart.map(i=>`
+<div class="item"><b>${esc(i.name)}</b><br>${money(i.price)} / ${esc(i.unit)}
+<div class="qty"><button onclick="changeQty('${i.id}',-1)">−</button><strong>${i.qty}</strong>
+<button onclick="changeQty('${i.id}',1)">+</button><button class="light" onclick="removeItem('${i.id}')">Supprimer</button></div></div>`).join(""):"Votre panier est vide.";
+}
+function openCart(){document.getElementById("cartOverlay").classList.add("show")}
+function closeCart(){document.getElementById("cartOverlay").classList.remove("show")}
 
 function showError(message){
-  let box = document.getElementById("errorBox");
-
-  if(!box){
-    box = document.createElement("div");
-    box.id = "errorBox";
-    box.style.cssText = `
-      background:#fff1f0;
-      color:#b42318;
-      border:1px solid #f5b5b0;
-      border-left:5px solid #b42318;
-      padding:14px;
-      border-radius:10px;
-      margin:12px 0;
-      font-weight:700;
-    `;
-
-    const form = document.getElementById("adForm");
-    form.prepend(box);
-  }
-
-  box.innerHTML = "⚠️ " + message;
-  box.scrollIntoView({behavior:"smooth", block:"center"});
+let box=document.getElementById("errorBox");
+if(!box){box=document.createElement("div");box.id="errorBox";box.style.cssText="background:#fff1f0;color:#b42318;border:1px solid #f5b5b0;border-left:5px solid #b42318;padding:14px;border-radius:10px;margin:12px 0;font-weight:700;";document.getElementById("adForm").prepend(box)}
+box.innerHTML="⚠️ "+esc(message);box.scrollIntoView({behavior:"smooth",block:"center"});
 }
+function clearError(){const b=document.getElementById("errorBox");if(b)b.remove()}
 
-function clearError(){
-  const box = document.getElementById("errorBox");
-  if(box) box.remove();
-}
-
-function compressImage(file, maxWidth=1000, quality=0.75){
-  return new Promise((resolve,reject)=>{
-    const reader = new FileReader();
-
-    reader.onerror = () => reject(new Error("Impossible de lire la photo."));
-
-    reader.onload = () => {
-      const img = new Image();
-
-      img.onerror = () => reject(new Error("Le fichier sélectionné n'est pas une image valide."));
-
-      img.onload = () => {
-        let width = img.width;
-        let height = img.height;
-
-        if(width > maxWidth){
-          height = Math.round(height * maxWidth / width);
-          width = maxWidth;
-        }
-
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-
-        const ctx = canvas.getContext("2d");
-
-        if(!ctx){
-          reject(new Error("Le navigateur ne permet pas de traiter cette image."));
-          return;
-        }
-
-        ctx.drawImage(img,0,0,width,height);
-
-        const compressed = canvas.toDataURL("image/jpeg",quality);
-
-        resolve(compressed);
-      };
-
-      img.src = reader.result;
-    };
-
-    reader.readAsDataURL(file);
-  });
+function compressImage(file,maxWidth=1000,quality=.72){
+return new Promise((resolve,reject)=>{
+const r=new FileReader();r.onerror=()=>reject(new Error("Impossible de lire la photo."));
+r.onload=()=>{const img=new Image();img.onerror=()=>reject(new Error("Image invalide."));
+img.onload=()=>{let w=img.width,h=img.height;if(w>maxWidth){h=Math.round(h*maxWidth/w);w=maxWidth}
+const c=document.createElement("canvas");c.width=w;c.height=h;const ctx=c.getContext("2d");
+if(!ctx)return reject(new Error("Traitement image impossible."));ctx.drawImage(img,0,0,w,h);resolve(c.toDataURL("image/jpeg",quality))}
+;img.src=r.result};r.readAsDataURL(file)});
 }
 
 async function previewPhoto(e){
-  clearError();
-
-  const f = e.target.files[0];
-
-  if(!f){
-    photoData = "";
-    document.getElementById("preview").innerHTML = "";
-    return;
-  }
-
-  if(!f.type.startsWith("image/")){
-    e.target.value = "";
-    photoData = "";
-    showError("Veuillez sélectionner une image JPG, PNG ou autre format image.");
-    return;
-  }
-
-  try{
-    photoData = await compressImage(f);
-
-    document.getElementById("preview").innerHTML = `
-      <img src="${photoData}"
-      style="max-width:200px;max-height:140px;border-radius:10px">
-      <div style="font-size:12px;color:#68776f;margin-top:5px">
-        ✓ Photo préparée et compressée
-      </div>
-    `;
-
-  }catch(error){
-    console.error("Erreur photo :",error);
-    photoData = "";
-    e.target.value = "";
-    document.getElementById("preview").innerHTML = "";
-    showError("Impossible de traiter la photo : " + error.message);
-  }
+clearError();const f=e.target.files[0];if(!f){photoData="";return}
+if(!f.type.startsWith("image/")){e.target.value="";return showError("Veuillez sélectionner une image.")}
+try{photoData=await compressImage(f);document.getElementById("preview").innerHTML=`<img src="${photoData}" style="max-width:200px;max-height:140px;border-radius:10px"><div class="small">✓ Photo prête</div>`}
+catch(err){photoData="";e.target.value="";showError(err.message)}
 }
 
-function submitAd(e){
-  e.preventDefault();
-  clearError();
-
-  try{
-
-    if(!photoData){
-      showError("Ajoutez une photo du produit avant d'envoyer l'annonce.");
-      return;
-    }
-
-    const ad = {
-      id: Date.now(),
-      name: adName.value.trim(),
-      category: adCategory.value,
-      buyPrice: Number(adBuy.value),
-      unit: adUnit.value,
-      quantity: Number(adQty.value || 0),
-      location: adLocation.value.trim(),
-      photo: photoData,
-      gross: adGross.value,
-      retail: adRetail.value,
-      negotiable: adNegotiable.value,
-      delivery: adDelivery.value,
-      owner: adOwner.value.trim(),
-      phone: adPhone.value.trim(),
-      description: adDescription.value.trim(),
-      status: "pending",
-      updated: new Date().toLocaleDateString("fr-FR")
-    };
-
-    /* Vérification des informations obligatoires */
-    if(!ad.name){
-      showError("Le nom du produit est obligatoire.");
-      return;
-    }
-
-    if(!ad.category){
-      showError("Veuillez choisir une catégorie.");
-      return;
-    }
-
-    if(!ad.buyPrice || ad.buyPrice < 0){
-      showError("Veuillez saisir un prix demandé valide.");
-      return;
-    }
-
-    if(!ad.owner){
-      showError("Le nom du propriétaire est obligatoire.");
-      return;
-    }
-
-    if(!ad.phone){
-      showError("Le téléphone du propriétaire est obligatoire.");
-      return;
-    }
-
-    /* Ajout de l'annonce */
-    ads.push(ad);
-
-    /* Tentative d'enregistrement */
-    try{
-      localStorage.setItem(
-        "samadiyaAdsV3",
-        JSON.stringify(ads)
-      );
-    }catch(storageError){
-
-      /* Annulation si l'enregistrement échoue */
-      ads = ads.filter(a => a.id !== ad.id);
-
-      console.error("Erreur stockage :",storageError);
-
-      showError(
-        "L'annonce n'a pas pu être enregistrée dans ce navigateur. " +
-        "Le stockage est peut-être plein. " +
-        "Essayez avec une photo plus petite ou videz les données du site."
-      );
-
-      return;
-    }
-
-    /* Vérification réelle */
-    const verification = JSON.parse(
-      localStorage.getItem("samadiyaAdsV3") || "[]"
-    );
-
-    const saved = verification.find(a => a.id === ad.id);
-
-    if(!saved){
-      ads = verification;
-
-      showError(
-        "L'annonce n'a pas été retrouvée après son enregistrement. " +
-        "Veuillez réessayer."
-      );
-
-      return;
-    }
-
-    /* Tout est OK */
-    e.target.reset();
-    photoData = "";
-
-    document.getElementById("preview").innerHTML = "";
-
-    renderAdmin();
-
-    alert(
-      "✅ Annonce envoyée avec succès !\n\n" +
-      "Elle est maintenant EN ATTENTE DE VALIDATION."
-    );
-
-    document.getElementById("admin").scrollIntoView({
-      behavior:"smooth"
-    });
-
-  }catch(error){
-
-    console.error("ERREUR AL SAMADIYA :",error);
-
-    showError(
-      "Une erreur inattendue est survenue : " +
-      error.message
-    );
-  }
+async function submitAd(e){
+e.preventDefault();clearError();if(!photoData)return showError("Ajoutez ou prenez une photo.");
+const qty=Number(document.getElementById("adQty").value||0);
+if(qty<=0)return showError("La quantité disponible doit être supérieure à 0.");
+const payload={
+nom_produit:document.getElementById("adName").value.trim(),
+categorie:document.getElementById("adCategory").value,
+prix_demande:Number(document.getElementById("adBuy").value),
+unite:document.getElementById("adUnit").value,quantite:qty,
+localisation:document.getElementById("adLocation").value.trim(),photo_url:photoData,
+vente_gros:document.getElementById("adGross").value==="Oui",
+vente_detail:document.getElementById("adRetail").value==="Oui",
+prix_negociable:document.getElementById("adNegotiable").value==="Oui",
+livraison_disponible:document.getElementById("adDelivery").value==="Oui",
+nom_proprietaire:document.getElementById("adOwner").value.trim(),
+telephone:document.getElementById("adPhone").value.trim(),
+description:document.getElementById("adDescription").value.trim(),statut:"en_attente"};
+if(!payload.nom_produit||!payload.categorie||!payload.prix_demande||!payload.nom_proprietaire||!payload.telephone)
+return showError("Veuillez remplir tous les champs obligatoires.");
+const {error}=await db.from("annonces").insert(payload);
+if(error){console.error(error);return showError("Enregistrement impossible : "+error.message)}
+e.target.reset();photoData="";document.getElementById("preview").innerHTML="";
+await loadAds();alert("✅ Annonce envoyée. Elle est en attente de validation.");
 }
+
 function renderAdmin(){
-const box=document.getElementById("adminList"),pending=ads.filter(a=>a.status==="pending");
-if(!pending.length){
-box.innerHTML='<div style="padding:20px;border:1px dashed #cbd8d1;border-radius:12px;text-align:center;color:#666;background:#fafdfb"><b>Aucune annonce en attente.</b><br><span style="font-size:14px">Les nouvelles annonces envoyées par les vendeurs apparaîtront ici.</span></div>';
-return
+const box=document.getElementById("adminList");if(!box)return;
+const pending=ads.filter(a=>a.status==="en_attente");
+if(!pending.length){box.innerHTML='<div style="padding:20px;border:1px dashed #cbd8d1;border-radius:12px;text-align:center;color:#666;background:#fafdfb"><b>Aucune annonce en attente.</b></div>';return}
+box.innerHTML=pending.map(a=>`
+<div class="pending"><img src="${esc(a.photo)}" alt="${esc(a.name)}"><span class="status">EN ATTENTE</span>
+<h3>${esc(a.name)}</h3><p>Propriétaire : <b>${esc(a.owner)}</b> — ${esc(a.phone)}<br>
+Prix demandé : <b>${money(a.buyPrice)} / ${esc(a.unit)}</b><br>
+Quantité : ${a.quantity} ${esc(a.unit)} — ${esc(a.location||"non précisée")}</p>
+<div class="adminRow"><div><label>Prix de vente AL SAMADIYA</label>
+<input id="sell-${a.id}" type="number" min="${a.buyPrice}" placeholder="Ex. 350" oninput="calcMargin(${a.id})"></div>
+<div><label>Marge</label><input id="margin-${a.id}" disabled></div></div>
+<div class="tools"><button class="btn g" onclick="publishAd(${a.id})">Valider et publier</button>
+<button class="btn light" onclick="rejectAd(${a.id})">Refuser</button></div></div>`).join("");
 }
-box.innerHTML=pending.map(a=>`<div class="pending"><img src="${a.photo}" alt="${a.name}"><span class="status">EN ATTENTE</span><h3>${a.name}</h3><p>Propriétaire : <b>${a.owner}</b> — ${a.phone}<br>Prix demandé : <b>${money(a.buyPrice)} / ${a.unit}</b><br>Quantité : ${a.quantity||"non précisée"} ${a.unit} — ${a.location||"non précisée"}<br>Gros : ${a.gross} • Détail : ${a.retail} • Négociable : ${a.negotiable} • Livraison : ${a.delivery}</p>
-<div class="adminRow"><div><label>Prix de vente AL SAMADIYA</label><input id="sell-${a.id}" type="number" min="${a.buyPrice}" placeholder="Ex. 350" oninput="calcMargin(${a.id})"></div><div><label>Marge</label><input id="margin-${a.id}" disabled placeholder="Automatique"></div></div>
-<div class="tools"><button class="btn g" onclick="publishAd(${a.id})"> Valider et publier</button><button class="btn light" onclick="rejectAd(${a.id})"> Refuser</button></div></div>`).join("")
-}
-function calcMargin(id){const a=ads.find(x=>x.id===id),v=Number(document.getElementById("sell-"+id).value||0);document.getElementById("margin-"+id).value=(v-a.buyPrice).toLocaleString("fr-FR")+" FCFA / "+a.unit}
-function publishAd(id){
-const a=ads.find(x=>x.id===id),v=Number(document.getElementById("sell-"+id).value);
-if(!v||v<a.buyPrice)return alert("Le prix de vente doit être supérieur ou égal au prix demandé.");
-a.sellPrice=v;a.margin=v-a.buyPrice;a.status="published";a.updated=new Date().toLocaleDateString("fr-FR");localStorage.setItem("samadiyaAdsV3",JSON.stringify(ads));renderAdmin();renderProducts();alert("Annonce validée et publiée.")
-}
-function rejectAd(id){const a=ads.find(x=>x.id===id);a.status="rejected";localStorage.setItem("samadiyaAdsV3",JSON.stringify(ads));renderAdmin();alert("Annonce refusée.")}
+function calcMargin(id){const a=ads.find(x=>x.id===id),v=Number(document.getElementById("sell-"+id).value||0);document.getElementById("margin-"+id).value=money(v-a.buyPrice)+" / "+a.unit}
 
-function openOrder(){
-if(!cart.length)return alert("Votre panier est vide.");
-closeCart();document.getElementById("orderModal").classList.add("show");updateOrder()
+async function publishAd(id){
+const a=ads.find(x=>x.id===id),v=Number(document.getElementById("sell-"+id).value);
+if(!a||!v||v<a.buyPrice)return alert("Le prix de vente doit être supérieur ou égal au prix demandé.");
+const {error}=await db.from("annonces").update({prix_al_samadiya:v,statut:"validee",date_validation:new Date().toISOString()}).eq("id",id);
+if(error)return alert("Validation impossible : "+error.message);
+await loadAds();alert("Annonce validée et publiée.");
 }
+async function rejectAd(id){
+const reason=prompt("Motif du refus :");if(reason===null)return;
+const {error}=await db.from("annonces").update({statut:"refusee",motif_refus:reason}).eq("id",id);
+if(error)return alert("Refus impossible : "+error.message);await loadAds();alert("Annonce refusée.");
+}
+
+function openOrder(){if(!cart.length)return alert("Votre panier est vide.");closeCart();document.getElementById("orderModal").classList.add("show");updateOrder()}
 function closeOrder(){document.getElementById("orderModal").classList.remove("show")}
 function updateOrder(){
 const gross=document.getElementById("buyerType").value==="grossiste";document.getElementById("grossArea").style.display=gross?"block":"none";
 const delivery=document.querySelector('input[name="mode"]:checked').value==="livraison";document.getElementById("deliveryArea").style.display=delivery?"block":"none";
 const sub=cart.reduce((s,i)=>s+i.price*i.qty,0),ship=delivery?Number(document.getElementById("deliveryFee").value):0;
-document.getElementById("orderSummary").innerHTML=cart.map(i=>`• ${i.name} — ${i.qty} × ${money(i.price)}`).join("<br>");
-document.getElementById("orderSub").textContent=money(sub);document.getElementById("orderShip").textContent=money(ship);document.getElementById("orderTotal").textContent=money(sub+ship)
+document.getElementById("orderSummary").innerHTML=cart.map(i=>`• ${esc(i.name)} — ${i.qty} × ${money(i.price)}`).join("<br>");
+document.getElementById("orderSub").textContent=money(sub);document.getElementById("orderShip").textContent=money(ship);document.getElementById("orderTotal").textContent=money(sub+ship);
 }
-function sendOrder(){
-const name=document.getElementById("customerName").value.trim();
-const phone=document.getElementById("customerPhone").value.trim();
-const buyer=document.getElementById("buyerType").value;
-const mode=document.querySelector('input[name="mode"]:checked').value;
-const address=document.getElementById("deliveryAddress").value.trim();
-const pickup=document.getElementById("pickupPlace").value.trim();
-const neg=document.getElementById("negotiatedPrice").value;
 
+async function sendOrder(){
+const name=document.getElementById("customerName").value.trim(),phone=document.getElementById("customerPhone").value.trim();
+const buyer=document.getElementById("buyerType").value,mode=document.querySelector('input[name="mode"]:checked').value;
+const address=document.getElementById("deliveryAddress").value.trim(),pickup=document.getElementById("pickupPlace").value.trim(),neg=document.getElementById("negotiatedPrice").value;
 if(!name||!phone)return alert("Nom et téléphone obligatoires.");
 if(mode==="livraison"&&!address)return alert("Adresse de livraison obligatoire.");
 if(buyer==="grossiste"&&mode==="retrait"&&!pickup)return alert("Indiquez le lieu de chargement/retrait.");
+if(!cart.length)return alert("Panier vide.");
 
-const sub=cart.reduce((s,i)=>s+i.price*i.qty,0);
-const ship=mode==="livraison"?Number(document.getElementById("deliveryFee").value):0;
+for(const item of cart){
+if(!item.adId)continue;
+const {data,error}=await db.from("annonces").select("id,nom_produit,quantite,statut,unite,prix_al_samadiya").eq("id",item.adId).single();
+if(error||!data||data.statut!=="validee"||Number(data.quantite)<Number(item.qty))
+return alert(`Stock insuffisant pour ${item.name}. Actualisez puis recommencez.`);
+}
+
+for(const item of cart){
+if(!item.adId)continue;
+const {data:cur,error:re}=await db.from("annonces").select("quantite").eq("id",item.adId).single();
+if(re||!cur||Number(cur.quantite)<Number(item.qty))return alert("Le stock vient de changer. Recommencez.");
+const oldQty=Number(cur.quantite),newQty=oldQty-Number(item.qty);
+const {error:ue}=await db.from("annonces").update({quantite:newQty,statut:newQty<=0?"epuisee":"validee"}).eq("id",item.adId).eq("quantite",oldQty);
+if(ue)return alert("Mise à jour du stock impossible. Recommencez.");
+}
+
+const sub=cart.reduce((s,i)=>s+i.price*i.qty,0),ship=mode==="livraison"?Number(document.getElementById("deliveryFee").value):0;
 const id="ASM-"+Date.now().toString().slice(-8);
-
-let lines=[];
-lines.push("AL SAMADIYA MARKET");
-lines.push("COMMANDE "+id);
-lines.push("Nom / entreprise : "+name);
-lines.push("Téléphone : "+phone);
-lines.push("Type : "+(buyer==="grossiste"?"GROSSISTE":"DETAIL"));
-lines.push("");
-lines.push("PRODUITS");
-cart.forEach(i=>{
-  lines.push("• "+i.name+" — "+i.qty+" × "+i.price+" FCFA = "+(i.qty*i.price)+" FCFA");
-});
-lines.push("");
-lines.push("Marchandise : "+sub+" FCFA");
-if(buyer==="grossiste"&&neg)lines.push("Prix final négocié communiqué : "+neg+" FCFA");
+let lines=["AL SAMADIYA MARKET","COMMANDE "+id,"Nom / entreprise : "+name,"Téléphone : "+phone,"Type : "+(buyer==="grossiste"?"GROSSISTE":"DETAIL"),"","PRODUITS"];
+cart.forEach(i=>lines.push("• "+i.name+" — "+i.qty+" × "+i.price+" FCFA = "+(i.qty*i.price)+" FCFA"));
+lines.push("","Marchandise : "+sub+" FCFA");if(buyer==="grossiste"&&neg)lines.push("Prix final négocié communiqué : "+neg+" FCFA");
 lines.push("Réception : "+(mode==="livraison"?"LIVRAISON":"RETRAIT"));
-if(mode==="livraison"){
-  lines.push("Adresse : "+address);
-  lines.push("Frais livraison : "+ship+" FCFA");
-}else if(pickup){
-  lines.push("Lieu de chargement/retrait : "+pickup);
-}
+if(mode==="livraison")lines.push("Adresse : "+address,"Frais livraison : "+ship+" FCFA");else if(pickup)lines.push("Lieu de chargement/retrait : "+pickup);
 lines.push("TOTAL : "+(sub+ship)+" FCFA");
-lines.push("Prix consultés le "+new Date().toLocaleDateString("fr-FR"));
-
-const message=encodeURIComponent(lines.join("\n"));
-window.open("https://wa.me/221779306910?text="+message,"_blank");
+window.open("https://wa.me/221779306910?text="+encodeURIComponent(lines.join("\n")),"_blank");
+cart=[];saveCart();updateCart();closeOrder();await loadAds();
+alert("✅ Stock mis à jour. La commande est prête à être envoyée sur WhatsApp.");
 }
-renderProducts();updateCart();renderAdmin();
+
+async function reportAd(id){
+const motif=prompt("Motif du signalement :");if(motif===null||!motif.trim())return;
+const description=prompt("Décrivez le problème (facultatif) :")||"",nom=prompt("Votre nom (facultatif) :")||"",telephone=prompt("Votre téléphone (facultatif) :")||"";
+const {error}=await db.from("signalements").insert({annonce_id:id,motif:motif.trim(),description,nom,telephone,statut:"nouveau"});
+if(error)return alert("Impossible d'envoyer le signalement : "+error.message);
+alert("✅ Signalement envoyé à l'administration.");
+}
+
+renderProducts();updateCart();loadAds();
 </script>
 </body>
 </html>
+```
