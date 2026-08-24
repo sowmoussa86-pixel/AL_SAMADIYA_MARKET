@@ -306,19 +306,186 @@ await loadAds();alert("✅ Annonce envoyée. Elle est en attente de validation."
 }
 
 function renderAdmin(){
-const box=document.getElementById("adminList");if(!box)return;
-const pending=ads.filter(a=>a.status==="en_attente");
-if(!pending.length){box.innerHTML='<div style="padding:20px;border:1px dashed #cbd8d1;border-radius:12px;text-align:center;color:#666;background:#fafdfb"><b>Aucune annonce en attente.</b></div>';return}
-box.innerHTML=pending.map(a=>`
-<div class="pending"><img src="${esc(a.photo)}" alt="${esc(a.name)}"><span class="status">EN ATTENTE</span>
-<h3>${esc(a.name)}</h3><p>Propriétaire : <b>${esc(a.owner)}</b> — ${esc(a.phone)}<br>
-Prix demandé : <b>${money(a.buyPrice)} / ${esc(a.unit)}</b><br>
-Quantité : ${a.quantity} ${esc(a.unit)} — ${esc(a.location||"non précisée")}</p>
-<div class="adminRow"><div><label>Prix de vente AL SAMADIYA</label>
-<input id="sell-${a.id}" type="number" min="${a.buyPrice}" placeholder="Ex. 350" oninput="calcMargin(${a.id})"></div>
-<div><label>Marge</label><input id="margin-${a.id}" disabled></div></div>
-<div class="tools"><button class="btn g" onclick="publishAd(${a.id})">Valider et publier</button>
-<button class="btn light" onclick="rejectAd(${a.id})">Refuser</button></div></div>`).join("");
+  const box = document.getElementById("adminList");
+  if(!box) return;
+
+  const pending = ads.filter(a => a.status === "en_attente");
+
+  if(!pending.length){
+    box.innerHTML = `
+      <div style="
+        padding:25px;
+        border:1px dashed #cbd5e1;
+        border-radius:12px;
+        text-align:center;
+        color:#64748b;
+      ">
+        <strong>Aucune annonce en attente de validation</strong>
+        <p style="margin-top:8px">
+          Les nouvelles annonces déposées par les vendeurs apparaîtront ici.
+        </p>
+      </div>
+    `;
+    return;
+  }
+
+  box.innerHTML = pending.map(a => `
+    <div style="
+      padding:20px;
+      margin-bottom:15px;
+      border:1px solid #dbe3ea;
+      border-radius:14px;
+      background:#fff;
+      box-shadow:0 2px 8px rgba(0,0,0,.05);
+    ">
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:15px;
+      ">
+        <h3 style="margin:0">
+          ${esc(a.name || a.nom_produit || "Produit sans nom")}
+        </h3>
+
+        <span style="
+          background:#fff3cd;
+          color:#856404;
+          padding:6px 12px;
+          border-radius:20px;
+          font-size:13px;
+          font-weight:bold;
+        ">
+          EN ATTENTE
+        </span>
+      </div>
+
+      <div style="line-height:1.8">
+
+        <div>
+          <strong>Catégorie :</strong>
+          ${esc(a.category || a.categorie || "")}
+        </div>
+
+        <div>
+          <strong>Prix demandé :</strong>
+          ${Number(a.buyPrice || a.prix_demande || 0).toLocaleString("fr-FR")}
+          FCFA
+          ${esc(a.unit || a.unite || "")}
+        </div>
+
+        <div>
+          <strong>Quantité :</strong>
+          ${Number(a.quantity || a.quantite || 0).toLocaleString("fr-FR")}
+          ${esc(a.unit || a.unite || "")}
+        </div>
+
+        <div>
+          <strong>Vendeur :</strong>
+          ${esc(a.owner || a.nom_proprietaire || "")}
+        </div>
+
+        <div>
+          <strong>Téléphone :</strong>
+          ${esc(a.telephone || a.phone || "")}
+        </div>
+
+        <div>
+          <strong>Localisation :</strong>
+          ${esc(a.location || a.localisation || "")}
+        </div>
+
+        <div>
+          <strong>Description :</strong>
+          ${esc(a.description || "")}
+        </div>
+
+      </div>
+
+      <hr style="margin:15px 0;border:0;border-top:1px solid #eee">
+
+      <div class="adminRow">
+
+        <div>
+          <label><strong>Prix de vente AL SAMADIYA</strong></label>
+
+          <input
+            id="sell-${a.id}"
+            type="number"
+            min="${Number(a.buyPrice || a.prix_demande || 0)}"
+            placeholder="Ex. 350"
+            oninput="calcMargin(${a.id})"
+            style="
+              padding:10px;
+              width:150px;
+              margin-top:5px;
+              border:1px solid #ccc;
+              border-radius:8px;
+            "
+          />
+        </div>
+
+        <div>
+          <label><strong>Marge</strong></label>
+
+          <input
+            id="margin-${a.id}"
+            disabled
+            style="
+              padding:10px;
+              width:120px;
+              margin-top:5px;
+              border:1px solid #ccc;
+              border-radius:8px;
+              background:#f5f5f5;
+            "
+          />
+        </div>
+
+      </div>
+
+      <div style="
+        display:flex;
+        gap:10px;
+        margin-top:18px;
+        flex-wrap:wrap;
+      ">
+
+        <button
+          class="btn"
+          onclick="publishAd(${a.id})"
+          style="
+            background:#198754;
+            color:white;
+            border:0;
+            padding:10px 18px;
+            border-radius:8px;
+            cursor:pointer;
+          "
+        >
+          ✓ Valider et publier
+        </button>
+
+        <button
+          class="btn"
+          onclick="rejectAd(${a.id})"
+          style="
+            background:#dc3545;
+            color:white;
+            border:0;
+            padding:10px 18px;
+            border-radius:8px;
+            cursor:pointer;
+          "
+        >
+          ✕ Refuser
+        </button>
+
+      </div>
+
+    </div>
+  `).join("");
 }
 function calcMargin(id){const a=ads.find(x=>x.id===id),v=Number(document.getElementById("sell-"+id).value||0);document.getElementById("margin-"+id).value=money(v-a.buyPrice)+" / "+a.unit}
 
