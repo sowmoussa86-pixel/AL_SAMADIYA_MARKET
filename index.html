@@ -193,7 +193,7 @@ new Date(a.created_at).toLocaleDateString("fr-FR")};
 }
 
 async function loadAds(){
-const {data,error}=await db.from("annonces_public").select("*").order("created_at",{ascending:false});
+const {data,error}=await db.from("annonces").select("*").order("created_at",{ascending:false});
 if(error){console.error(error);return}
 ads=(data||[]).map(rowToAd);
 renderProducts();renderAdmin();
