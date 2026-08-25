@@ -527,20 +527,124 @@ const SUPABASE_PUBLISHABLE_KEY="sb_publishable_Inhj9ZhtHrWxuT7Uv-AUvg_HeJos3Fe";
 const {createClient}=supabase;
 const db=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 
-const baseProducts=[
-{id:1,name:"Mangue",category:"Agriculture",price:350,unit:"kg",updated:"15/08/2026",icon:""},
-{id:2,name:"Tomates",category:"Agriculture",price:1500,unit:"kg",updated:"15/08/2026",icon:""},
-{id:3,name:"Oignons",category:"Agriculture",price:1000,unit:"kg",updated:"15/08/2026",icon:""},
-{id:4,name:"Poisson frais",category:"Poisson & fruits de mer",price:3500,unit:"kg",updated:"15/08/2026",icon:""},
-{id:5,name:"Poulet",category:"Viande & élevage",price:4500,unit:"unité",updated:"15/08/2026",icon:""},
-{id:6,name:"Œufs - plateau de 30",category:"Viande & élevage",price:3000,unit:"plateau",updated:"15/08/2026",icon:""},
-{id:7,name:"Riz",category:"Alimentation",price:12000,unit:"sac",updated:"15/08/2026",icon:""},
-{id:8,name:"Jus de bissap",category:"Boissons naturelles",price:1000,unit:"litre",updated:"15/08/2026",icon:""},
-{id:9,name:"Jus de gingembre",category:"Boissons naturelles",price:1000,unit:"litre",updated:"15/08/2026",icon:""},
-{id:10,name:"Savon",category:"Parapharmacie",price:1500,unit:"unité",updated:"15/08/2026",icon:""},
-{id:11,name:"Complément alimentaire",category:"Compléments alimentaires",price:5000,unit:"boîte",updated:"15/08/2026",icon:""},
-{id:12,name:"T-shirt",category:"Mode",price:5000,unit:"unité",updated:"15/08/2026",icon:""},
-{id:13,name:"Ustensiles de cuisine",category:"Maison",price:7500,unit:"lot",updated:"15/08/2026",icon:""}
+const baseProducts = [
+  {
+    id: 1,
+    name: "Mangue",
+    category: "Agriculture",
+    price: 350,
+    unit: "kg",
+    updated: "15/08/2026",
+    icon: "mangue.jpg"
+  },
+  {
+    id: 2,
+    name: "Tomates",
+    category: "Agriculture",
+    price: 1500,
+    unit: "kg",
+    updated: "15/08/2026",
+    icon: "tomates.jpg"
+  },
+  {
+    id: 3,
+    name: "Oignons",
+    category: "Agriculture",
+    price: 1000,
+    unit: "kg",
+    updated: "15/08/2026",
+    icon: "oignons.jpg"
+  },
+  {
+    id: 4,
+    name: "Poisson frais",
+    category: "Poisson & fruits de mer",
+    price: 3500,
+    unit: "kg",
+    updated: "15/08/2026",
+    icon: "poisson-frais.jpg"
+  },
+  {
+    id: 5,
+    name: "Poulet",
+    category: "Viande & élevage",
+    price: 4500,
+    unit: "unité",
+    updated: "15/08/2026",
+    icon: "poulet.jpg"
+  },
+  {
+    id: 6,
+    name: "Œufs - plateau de 30",
+    category: "Viande & élevage",
+    price: 3000,
+    unit: "plateau",
+    updated: "15/08/2026",
+    icon: "oeufs.jpg"
+  },
+  {
+    id: 7,
+    name: "Riz",
+    category: "Alimentation",
+    price: 12000,
+    unit: "sac",
+    updated: "15/08/2026",
+    icon: "riz.jpg"
+  },
+  {
+    id: 8,
+    name: "Jus de bissap",
+    category: "Boissons naturelles",
+    price: 1000,
+    unit: "litre",
+    updated: "15/08/2026",
+    icon: "jus-bissap.jpg"
+  },
+  {
+    id: 9,
+    name: "Jus de gingembre",
+    category: "Boissons naturelles",
+    price: 1000,
+    unit: "litre",
+    updated: "15/08/2026",
+    icon: "jus-gingembre.jpg"
+  },
+  {
+    id: 10,
+    name: "Savon",
+    category: "Parapharmacie",
+    price: 1500,
+    unit: "unité",
+    updated: "15/08/2026",
+    icon: "savon.jpg"
+  },
+  {
+    id: 11,
+    name: "Complément alimentaire",
+    category: "Compléments alimentaires",
+    price: 5000,
+    unit: "boîte",
+    updated: "15/08/2026",
+    icon: "complement-alimentaire.jpg"
+  },
+  {
+    id: 12,
+    name: "T-shirt",
+    category: "Mode",
+    price: 5000,
+    unit: "unité",
+    updated: "15/08/2026",
+    icon: "tshirt.jpg"
+  },
+  {
+    id: 13,
+    name: "Ustensiles de cuisine",
+    category: "Maison",
+    price: 7500,
+    unit: "lot",
+    updated: "15/08/2026",
+    icon: "ustensiles-de-cuisine.jpg"
+  }
 ];
 
 let ads=[];
