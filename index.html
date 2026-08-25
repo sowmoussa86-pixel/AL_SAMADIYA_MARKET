@@ -113,16 +113,52 @@ footer{background:#063d29;color:#fff;padding:30px}.footerGrid{display:grid;grid-
 <div class="head"><h2>Produits disponibles</h2><p>Les prix affichés sont ceux validés par AL SAMADIYA. La date de mise à jour est affichée.</p></div>
 <div class="search"><input id="search" placeholder="Rechercher un produit..." oninput="renderProducts()"><button class="btn o" onclick="renderProducts()">Rechercher</button></div>
 <div class="categories">
-<button class="cat active" onclick="setCat('Tous',this)"><br>Tous</button>
-<button class="cat" onclick="setCat('Agriculture',this)"><br>Agriculture</button>
-<button class="cat" onclick="setCat('Poisson & fruits de mer',this)"><br>Poissons</button>
-<button class="cat" onclick="setCat('Viande & élevage',this)"><br>Élevage</button>
-<button class="cat" onclick="setCat('Alimentation',this)"><br>Alimentation</button>
-<button class="cat" onclick="setCat('Boissons naturelles',this)"><br>Boissons</button>
-<button class="cat" onclick="setCat('Parapharmacie',this)"><br>Parapharmacie</button>
-<button class="cat" onclick="setCat('Compléments alimentaires',this)"><br>Compléments</button>
-<button class="cat" onclick="setCat('Mode',this)"><br>Mode</button>
-<button class="cat" onclick="setCat('Maison',this)"><br>Maison</button>
+
+  <button class="category-card">
+    <img src="agriculture.png" alt="Agriculture">
+    <span>Agriculture</span>
+  </button>
+
+  <button class="category-card">
+    <img src="poissonnerie.png" alt="Poissons">
+    <span>Poissons</span>
+  </button>
+
+  <button class="category-card">
+    <img src="elevage.png" alt="Élevage">
+    <span>Élevage</span>
+  </button>
+
+  <button class="category-card">
+    <img src="alimentation.png" alt="Alimentation">
+    <span>Alimentation</span>
+  </button>
+
+  <button class="category-card">
+    <img src="boissons.png" alt="Boissons">
+    <span>Boissons</span>
+  </button>
+
+  <button class="category-card">
+    <img src="parapharmacie.png" alt="Parapharmacie">
+    <span>Parapharmacie</span>
+  </button>
+
+  <button class="category-card">
+    <img src="complements.png" alt="Compléments">
+    <span>Compléments</span>
+  </button>
+
+  <button class="category-card">
+    <img src="mode.png" alt="Mode">
+    <span>Mode</span>
+  </button>
+
+  <button class="category-card">
+    <img src="maison.png" alt="Maison">
+    <span>Maison</span>
+  </button>
+
 </div>
 <div id="products" class="products" style="margin-top:25px"></div>
 </div>
