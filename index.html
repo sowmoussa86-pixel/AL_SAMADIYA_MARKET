@@ -87,13 +87,27 @@ footer{background:#063d29;color:#fff;padding:30px}.footerGrid{display:grid;grid-
 .modal{position:fixed;inset:0;background:#0008;z-index:300;display:none;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.modalBox{width:min(720px,96%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;padding:22px}.close{float:right;border:0;background:#eee;border-radius:8px;padding:7px}.choice{display:grid;grid-template-columns:1fr 1fr;gap:8px}.choice label{border:1px solid var(--line);padding:10px;border-radius:9px}.summary{background:#f3f7f4;border-radius:10px;padding:12px;margin:12px 0}
 @media(max-width:900px){.links{display:none}.heroGrid{grid-template-columns:1fr}.categories{grid-template-columns:repeat(3,1fr)}.products{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr}.footerGrid{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.categories{grid-template-columns:repeat(2,1fr)}.products{grid-template-columns:1fr}.grid2,.adminRow,.choice{grid-template-columns:1fr}.search{flex-direction:column}.footerGrid{grid-template-columns:1fr}}
+/* ===== STYLE DES CATEGORIES ===== */
+
+.categories{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:14px;
+  margin-top:20px;
+}
+
 .category-card{
+  display:block;
+  width:100%;
+  min-width:0;
   background:#fff;
   border:1px solid var(--line);
-  border-radius:14px;
-  padding:10px;
+  border-radius:12px;
+  padding:8px;
   cursor:pointer;
   text-align:center;
+  box-sizing:border-box;
+  overflow:hidden;
   transition:0.2s;
 }
 
@@ -103,17 +117,96 @@ footer{background:#063d29;color:#fff;padding:30px}.footerGrid{display:grid;grid-
 }
 
 .category-card img{
+  position:static !important;
+  display:block;
+  width:100%;
+  height:110px;
+  object-fit:cover;
+  border-radius:10px;
+  margin:0 0 8px 0;
+}
+
+.category-card span{
+  display:block;
+  font-weight:700;
+  font-size:15px;
+  line-height:1.2;
+}
+
+/* ===== PRODUITS ===== */
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  align-items:start;
+}
+
+.product{
+  min-width:0;
+  box-sizing:border-box;
+}
+
+/* ===== MARKETPLACE ===== */
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  align-items:start;
+}
+
+.cards .card{
+  min-width:0;
+  height:auto;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+
+.cards .card img{
+  position:static !important;
+  display:block;
   width:100%;
   height:120px;
   object-fit:cover;
   border-radius:10px;
-  display:block;
-  margin-bottom:8px;
+  margin-bottom:10px;
 }
 
-.category-card span{
-  font-weight:700;
-  font-size:15px;
+.cards .card h3,
+.cards .card p{
+  position:static;
+  margin:6px 0;
+}
+
+/* ===== TELEPHONE ===== */
+
+@media(max-width:900px){
+  .categories{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .products{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .cards{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:560px){
+  .categories{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .products{
+    grid-template-columns:1fr;
+  }
+
+  .cards{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
