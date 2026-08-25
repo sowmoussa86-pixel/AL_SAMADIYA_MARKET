@@ -20,7 +20,14 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.97);backdr
 .categories{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.cat{background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px 7px;font-weight:800}.cat.active{border-color:var(--g);box-shadow:0 4px 15px #075b3a14}
 .products{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.product{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 6px 20px #0000000a}.pic{height:145px;background:linear-gradient(135deg,#eff9f3,#fff9ed);display:flex;align-items:center;justify-content:center;font-size:58px}.pic img{width:100%;height:100%;object-fit:cover}.pbody{padding:14px}.pcat{font-size:12px;color:var(--muted)}.price{font-size:19px;color:var(--g);font-weight:900}.date{font-size:11px;color:var(--muted);margin:4px 0 10px}.add{width:100%;border:0;border-radius:9px;background:var(--g);color:#fff;padding:10px;font-weight:800}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{background:#fff;padding:22px;border-radius:18px;box-shadow:0 7px 25px #075b3a12}.card h3{color:var(--g)}
-.card:nth-child(1){
+.card img{
+  width:100%;
+  height:160px;
+  object-fit:cover;
+  display:block;
+  border-radius:12px;
+  margin-bottom:14px;
+}.card:nth-child(1){
     background-image:url('agriculture.png');
     background-size:cover;
     background-position:center;
@@ -174,13 +181,61 @@ footer{background:#063d29;color:#fff;padding:30px}.footerGrid{display:grid;grid-
 <div class="wrap">
 <div class="head"><h2>Un marketplace pour plusieurs secteurs</h2></div>
 <div class="cards">
-<div class="card"><h3> Agriculture</h3><p>Fruits, légumes, céréales, tubercules et produits du champ.</p></div>
-<div class="card"><h3> Élevage & pêche</h3><p>Poissons, viandes, poulets, œufs et produits de la mer.</p></div>
-<div class="card"><h3> Boissons naturelles</h3><p>Bissap, gingembre, bouye, mangue, citronnade et autres boissons.</p></div>
-<div class="card"><h3> Parapharmacie</h3><p>Hygiène, soins, bébé et autres produits autorisés de parapharmacie.</p></div>
-<div class="card"><h3> Compléments alimentaires</h3><p>Vitamines, minéraux et compléments autorisés, soumis à validation avant publication.</p></div>
-<div class="card"><h3> Maison & Mode</h3><p>Vêtements, chaussures, accessoires et articles pour la maison.</p></div>
-</div>
+
+  <div class="card">
+    <img src="agriculture.png" alt="Agriculture">
+    <h3>Agriculture</h3>
+    <p>Fruits, légumes, céréales, tubercules et produits du champ.</p>
+  </div>
+
+  <div class="card">
+    <img src="elevage.png" alt="Élevage">
+    <h3>Élevage</h3>
+    <p>Animaux, viandes, volailles, œufs et produits d'élevage.</p>
+  </div>
+
+  <div class="card">
+    <img src="poissonnerie.png" alt="Poissonnerie">
+    <h3>Poissonnerie</h3>
+    <p>Poissons et produits de la mer.</p>
+  </div>
+
+  <div class="card">
+    <img src="alimentation.png" alt="Alimentation">
+    <h3>Alimentation</h3>
+    <p>Produits alimentaires et denrées.</p>
+  </div>
+
+  <div class="card">
+    <img src="boissons.png" alt="Boissons naturelles">
+    <h3>Boissons</h3>
+    <p>Jus, bissap, gingembre et boissons naturelles.</p>
+  </div>
+
+  <div class="card">
+    <img src="parapharmacie.png" alt="Parapharmacie">
+    <h3>Parapharmacie</h3>
+    <p>Hygiène, soins, bébé et produits de parapharmacie.</p>
+  </div>
+
+  <div class="card">
+    <img src="complements.png" alt="Compléments alimentaires">
+    <h3>Compléments alimentaires</h3>
+    <p>Vitamines, minéraux et compléments autorisés.</p>
+  </div>
+
+  <div class="card">
+    <img src="mode.png" alt="Mode">
+    <h3>Mode</h3>
+    <p>Vêtements, chaussures et accessoires.</p>
+  </div>
+
+  <div class="card">
+    <img src="maison.png" alt="Maison">
+    <h3>Maison</h3>
+    <p>Articles, équipements et accessoires pour la maison.</p>
+  </div>
+
 </div>
 </section>
 
