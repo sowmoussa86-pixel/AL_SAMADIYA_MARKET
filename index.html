@@ -312,7 +312,7 @@ footer{background:#063d29;color:#fff;padding:30px}.footerGrid{display:grid;grid-
     border-radius: 12px;
     margin-bottom: 12px;
 }
-}/
+}
 </style>
 </head>
 <body>
@@ -1133,7 +1133,249 @@ const {error}=await db.from("signalements").insert({annonce_id:id,motif:motif.tr
 if(error)return alert("Impossible d'envoyer le signalement : "+error.message);
 alert("✅ Signalement envoyé à l'administration.");
 }
+// ======================================================
+// ESPACE LIVREUR
+// ======================================================
 
+async function loadDriverOrders(){
+
+  const box = document.getElementById("driverOrders");
+
+  if(!box) return;
+
+  box.innerHTML = `
+    <div style="
+      padding:20px;
+      background:#f8f9fa;
+      border-radius:12px;
+      text-align:center;
+    ">
+      ⏳ Chargement des commandes...
+    </div>
+  `;
+
+  const { data, error } = await db
+    .from("commandes")
+    .select("*")
+    .eq("statut","a_livrer")
+    .order("created_at",{ascending:false});
+
+  if(error){
+
+    box.innerHTML = `
+      <div style="
+        padding:20px;
+        background:#fff3cd;
+        border-radius:12px;
+        color:#664d03;
+      ">
+        ⚠️ Impossible de charger les commandes.
+        <br><br>
+        ${esc(error.message)}
+      </div>
+    `;
+
+    return;
+  }
+
+  if(!data || !data.length){
+
+    box.innerHTML = `
+      <div style="
+        padding:30px;
+        text-align:center;
+        background:#f8f9fa;
+        border-radius:12px;
+      ">
+        📦 Aucune commande à livrer pour le moment.
+      </div>
+    `;
+
+    return;
+  }
+
+  box.innerHTML = data.map(c => `
+
+    <div style="
+      background:white;
+      border:1px solid #ddd;
+      border-radius:12px;
+      padding:18px;
+      margin-bottom:15px;
+      box-shadow:0 2px 8px rgba(0,0,0,.06);
+    ">
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        gap:10px;
+        flex-wrap:wrap;
+      ">
+
+        <strong>
+          🚚 ${esc(c.numero_commande || c.id)}
+        </strong>
+
+        <span style="
+          background:#fff3cd;
+          color:#664d03;
+          padding:5px 10px;
+          border-radius:20px;
+          font-size:13px;
+        ">
+          À LIVRER
+        </span>
+
+      </div>
+
+      <hr>
+
+      <p>
+        👤 <strong>Client :</strong>
+        ${esc(c.nom_client || "")}
+      </p>
+
+      <p>
+        📞 <strong>Téléphone :</strong>
+        ${esc(c.telephone || "")}
+      </p>
+
+      <p>
+        📍 <strong>Adresse :</strong>
+        ${esc(c.adresse || "Non renseignée")}
+      </p>
+
+      <p>
+        💰 <strong>Total :</strong>
+        ${money(c.total || 0)}
+      </p>
+
+      <div style="
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+        margin-top:15px;
+      ">
+
+        <button
+          class="btn"
+          onclick="driverContact('${encodeURIComponent(c.telephone || "")}')"
+        >
+          📞 Appeler
+        </button>
+
+        <button
+          class="btn"
+          onclick="driverWhatsApp('${encodeURIComponent(c.telephone || "")}','${encodeURIComponent(c.numero_commande || c.id)}')"
+        >
+          💬 WhatsApp
+        </button>
+
+        <button
+          class="btn"
+          onclick="driverDelivered('${c.id}')"
+          style="
+            background:#198754;
+            color:white;
+            border:0;
+          "
+        >
+          ✓ Livrée
+        </button>
+
+      </div>
+
+    </div>
+
+  `).join("");
+
+}
+
+
+// ------------------------------------------------------
+// CONTACT CLIENT
+// ------------------------------------------------------
+
+function driverContact(phone){
+
+  if(!phone){
+
+    alert("Numéro du client indisponible.");
+
+    return;
+  }
+
+  window.location.href = "tel:" + decodeURIComponent(phone);
+
+}
+
+
+// ------------------------------------------------------
+// WHATSAPP CLIENT
+// ------------------------------------------------------
+
+function driverWhatsApp(phone,numero){
+
+  phone = decodeURIComponent(phone);
+  numero = decodeURIComponent(numero);
+
+  if(!phone){
+
+    alert("Numéro du client indisponible.");
+
+    return;
+  }
+
+  const message =
+    "Bonjour, je suis le livreur de AL SAMADIYA MARKET concernant votre commande "
+    + numero
+    + ".";
+
+  window.open(
+    "https://wa.me/" +
+    phone.replace(/[^0-9]/g,"") +
+    "?text=" +
+    encodeURIComponent(message),
+    "_blank"
+  );
+
+}
+
+
+// ------------------------------------------------------
+// MARQUER UNE COMMANDE COMME LIVRÉE
+// ------------------------------------------------------
+
+async function driverDelivered(id){
+
+  if(!confirm("Confirmer que cette commande a été livrée ?")){
+
+    return;
+  }
+
+  const { error } = await db
+    .from("commandes")
+    .update({
+      statut:"livree",
+      date_livraison:new Date().toISOString()
+    })
+    .eq("id",id);
+
+  if(error){
+
+    alert(
+      "Impossible de mettre à jour la commande : "
+      + error.message
+    );
+
+    return;
+  }
+
+  alert("✅ Commande marquée comme livrée.");
+
+  loadDriverOrders();
+
+}
 renderProducts();updateCart();loadAds();
 </script>
 </body>
