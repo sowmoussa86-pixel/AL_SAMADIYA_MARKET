@@ -691,7 +691,14 @@ const list=publishedProducts().filter(p=>
 (!q||p.name.toLowerCase().includes(q)||p.category.toLowerCase().includes(q)));
 document.getElementById("products").innerHTML=list.length?list.map(p=>`
 <article class="product">
-<div class="pic"><img src="${esc(p.icon)}" alt="${esc(p.name)}"></div>
+<div class="pic">
+  <img 
+    src="${esc(p.photo || p.icon || 'logo.png')}" 
+    alt="${esc(p.name)}"
+    loading="lazy"
+    onerror="this.src='logo.png'"
+  >
+</div>
 <div class="pbody"><div class="pcat">${esc(p.category)} • /${esc(p.unit)}</div>
 <h3>${esc(p.name)}</h3><div class="price">${money(p.price)} / ${esc(p.unit)}</div>
 ${p.quantity!==null?`<div class="small">Stock : <b>${p.quantity} ${esc(p.unit)}</b></div><div class="small">Vendeur : ${esc(p.owner)}</div>`:""}
