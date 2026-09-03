@@ -1078,7 +1078,6 @@ const {error}=await db.from("annonces").update({statut:"refusee",motif_refus:rea
 if(error)return alert("Refus impossible : "+error.message);await loadAds();alert("Annonce refusée.");
 }
 
-async function sendOrder(){
 async function reportAd(id){
 const motif=prompt("Motif du signalement :");if(motif===null||!motif.trim())return;
 const description=prompt("Décrivez le problème (facultatif) :")||"",nom=prompt("Votre nom (facultatif) :")||"",telephone=prompt("Votre téléphone (facultatif) :")||"";
