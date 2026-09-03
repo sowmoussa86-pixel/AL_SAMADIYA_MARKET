@@ -734,13 +734,82 @@ else x.qty=next;saveCart();updateCart();
 }
 function removeItem(id){cart=cart.filter(i=>String(i.id)!==String(id));saveCart();updateCart()}
 function updateCart(){
-document.getElementById("cartCount").textContent=cart.reduce((s,i)=>s+i.qty,0);
-document.getElementById("cartTotal").textContent=money(cart.reduce((s,i)=>s+i.price*i.qty,0));
-document.getElementById("cartItems").innerHTML=cart.length?cart.map(i=>`
-<div class="item"><b>${esc(i.name)}</b><br>${money(i.price)} / ${esc(i.unit)}
-<div class="qty"><button onclick="changeQty('${i.id}',-1)">−</button><strong>${i.qty}</strong>
-<button onclick="changeQty('${i.id}',1)">+</button><button class="light" onclick="removeItem('${i.id}')">Supprimer</button></div></div>`).join(""):"Votre panier est vide.";
+  const totalQty = cart.reduce((s,i) => s + i.qty, 0);
+  const subtotal = cart.reduce((s,i) => s + (Number(i.price) * i.qty), 0);
+
+  const countEl = document.getElementById("cartCount");
+  const totalEl = document.getElementById("cartTotal");
+  const itemsEl = document.getElementById("cartItems");
+
+  if(countEl) countEl.textContent = totalQty;
+  if(totalEl) totalEl.textContent = money(subtotal);
+
+  if(!itemsEl) return;
+
+  if(!cart.length){
+    itemsEl.innerHTML = `
+      <div style="text-align:center;padding:25px 10px;color:#666">
+        🛒<br>
+        <strong>Votre panier est vide.</strong>
+        <br>
+        <span class="small">Ajoutez des produits pour commencer votre commande.</span>
+      </div>
+    `;
+    return;
+  }
+
+  itemsEl.innerHTML = cart.map(i => {
+    const lineTotal = Number(i.price) * i.qty;
+
+    return `
+      <div class="item" style="margin-bottom:12px;padding:12px;border-radius:12px">
+
+        <div style="display:flex;justify-content:space-between;gap:10px">
+          <div>
+            <b>${esc(i.name)}</b>
+            <div class="small">
+              ${money(i.price)} / ${esc(i.unit || "")}
+            </div>
+          </div>
+
+          <strong>${money(lineTotal)}</strong>
+        </div>
+
+        <div class="qty" style="margin-top:10px">
+          <button onclick="changeQty('${i.id}',-1)">−</button>
+
+          <strong style="min-width:30px;text-align:center">
+            ${i.qty}
+          </strong>
+
+          <button onclick="changeQty('${i.id}',1)">+</button>
+
+          <button
+            class="light"
+            onclick="removeItem('${i.id}')"
+            style="margin-left:8px"
+          >
+            🗑️ Supprimer
+          </button>
+        </div>
+
+      </div>
+    `;
+  }).join("");
 }
+function getCartSubtotal(){
+  return cart.reduce(
+    (total,item) => total + (Number(item.price) * Number(item.qty)),
+    0
+  );
+}
+
+function getCartCount(){
+  return cart.reduce(
+    (total,item) => total + Number(item.qty),
+    0
+  );
+}  
 function buyNow(id){
   const p = publishedProducts().find(x => String(x.id) === String(id));
   if(!p) return;
