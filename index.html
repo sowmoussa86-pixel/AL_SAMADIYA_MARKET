@@ -704,6 +704,13 @@ document.getElementById("products").innerHTML=list.length?list.map(p=>`
 ${p.quantity!==null?`<div class="small">Stock : <b>${p.quantity} ${esc(p.unit)}</b></div><div class="small">Vendeur : ${esc(p.owner)}</div>`:""}
 <div class="date">Mis à jour le ${esc(p.updated)}</div>
 <button class="add" onclick="addToCart('${p.id}')">Ajouter au panier</button>
+<button
+  class="btn o"
+  style="width:100%;margin-top:7px"
+  onclick="buyNow('${p.id}')"
+>
+  🛒 Acheter maintenant
+</button>
 ${p.adId?`<button class="btn light" style="width:100%;margin-top:7px" onclick="reportAd(${p.adId})">⚠️ Signaler un problème</button>`:""}
 </div></article>`).join(""):"<p>Aucun produit trouvé.</p>";
 }
@@ -734,6 +741,25 @@ document.getElementById("cartItems").innerHTML=cart.length?cart.map(i=>`
 <div class="qty"><button onclick="changeQty('${i.id}',-1)">−</button><strong>${i.qty}</strong>
 <button onclick="changeQty('${i.id}',1)">+</button><button class="light" onclick="removeItem('${i.id}')">Supprimer</button></div></div>`).join(""):"Votre panier est vide.";
 }
+function buyNow(id){
+  const p = publishedProducts().find(x => String(x.id) === String(id));
+  if(!p) return;
+
+  const existing = cart.find(i => String(i.id) === String(id));
+
+  if(existing){
+    if(p.quantity !== null && existing.qty >= p.quantity){
+      return alert("Stock disponible insuffisant.");
+    }
+    existing.qty++;
+  } else {
+    cart.push({...p, qty:1});
+  }
+
+  saveCart();
+  updateCart();
+  openOrder();
+}  
 function openCart(){document.getElementById("cartOverlay").classList.add("show")}
 function closeCart(){document.getElementById("cartOverlay").classList.remove("show")}
 
